@@ -1,0 +1,37 @@
+{
+  "name": "pncdemo",
+  "repo": "https://github.com/yapcheahshen/pncdemo.git",
+  "description": "hello world",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "ksanaforge/boot": "*",
+    "brighthas/bootstrap": "*",
+    "ksana/document": "*",
+    "ksanaforge/fileinstaller": "*",
+    "ksanaforge/checkbrowser": "*",
+    "ksanaforge/htmlfs": "*",
+    "ksanaforge/stackview": "*",
+    "ksanaforge/splitter": "*",
+    "pncdemo/main": "*",
+    "pncdemo/comp1": "*",
+    "pncdemo/textview": "*",
+    "pncdemo/contextmenu": "*"
+  },
+  "development": {},
+  "paths": [
+    "components",
+    "../components",
+    "../../components",
+    "../node_modules/",
+    "../../node_modules/"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": [
+    "index.js"
+  ],
+  "styles": [
+    "index.css"
+  ]
+}
