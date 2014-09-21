@@ -4,16 +4,17 @@
 Require("bootstrap");
 var contextmenu=Require("contextmenu");
 var stackview=Require("stackview"); 
-
+var textview=Require("textview");
 var main = React.createClass({
-  menuitems:function() {
+  selection_menuitems:function() {
     return [
-      {caption:"addselection",handler:this.addSelection}
+      {caption:"Add",handler:this.addSelection}
     ]
   },
   getInitialState: function() {
     return {
-      menuitems:this.menuitems(),
+      menuitems:this.selection_menuitems(),
+      menupayload:{},
       views:[
         {name:"v1",content:"乾\n元亨，利貞。天行健，君子以自強不息。\n初九：潛龍，勿用。九二：見龍在田，利見大人。九三：君子終日乾乾，夕惕若，厲，无咎。九四：或躍在淵，无咎。九五：飛龍在天，利見大人。上九：亢龍有悔。用九：見群龍无首，吉。"}
         ,{name:"v2",content:"坤\n元亨，利牝馬之貞。君子有攸往，先迷後得主，利西南得朋，東北喪朋。安貞，吉。地勢坤，君子以厚德載物。\n初六：履霜，堅冰至。六二：直，方，大，不習无不利。六三：含章可貞。或從王事，无成有終。六四：括囊；无咎，无譽。六五：黃裳，元吉。上六：龍戰于野，其血玄黃。用六：利永貞。"}
@@ -22,9 +23,14 @@ var main = React.createClass({
       ]
     };
   },
-  addSelection:function(opts) {
-    console.log("add",opts);
+  addSelection:function(opts,idx) {
+    //console.log("add",opts);
     opts.view.addRange("selected",opts.selstart,opts.sellength);
+  },
+  clearMarkup:function(opts,idx) {
+    //console.log("clearMarkup");
+    var baseclass=this.state.menuitems[idx].caption;
+    opts.view.clearMarkup(baseclass,opts.selstart);
   },
   componentDidMount:function() {
   },
@@ -34,18 +40,32 @@ var main = React.createClass({
       selstart:opts.start,
       sellength:opts.len,
       x:opts.x,
-      y:opts.y
+      y:opts.y,
+      header:"Selection"
     }
+  },
+
+  createMarkupMenuItems:function(markups) {
+    return markups.map(function(m){
+      var baseclass=m.replace(/ .*/g,'');
+      return {caption:baseclass, handler:this.clearMarkup}
+    },this); 
   },
   action: function() {
     var args = [];
     Array.prototype.push.apply( args, arguments );
     var action=args.shift();
-    if (action=="selection") {
+    if (action=="selection" || action=="clearMarkup") {
       var opts=args[0];
       var payload=this.getMenuPayload(opts);
-      if (opts.len) {
-        this.setState({menupayload:payload});
+      var menuitems=this.selection_menuitems();
+      if (action=="clearMarkup") {
+        menuitems=this.createMarkupMenuItems(opts.markups);
+        payload.header="Clear";
+      }
+
+      if (opts.len || action=="clearMarkup") {
+        this.setState({menuitems:menuitems,menupayload:payload});
       } else {
         this.setState({menupayload:null});
       }
@@ -59,10 +79,10 @@ var main = React.createClass({
       <div id="main">
         <contextmenu menuitems={this.state.menuitems} payload={this.state.menupayload}/>
         <div className="col-md-6">
-          <stackview action={this.action} views={this.state.views}/>
+          <stackview view={textview} action={this.action} views={this.state.views}/>
         </div>
         <div className="col-md-6">
-          <stackview action={this.action} views={this.state.views}/>
+          <stackview view={textview} action={this.action} views={this.state.views}/>
         </div>
       </div>
     );

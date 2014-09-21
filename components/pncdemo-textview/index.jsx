@@ -13,16 +13,26 @@ var textview = React.createClass({
     ranges.push({type:type,start:start,len:len});
     this.setState({ranges:ranges});
   },
+  clearMarkup:function(type,start) {
+    start++;//should remove it in the future
+    var ranges=this.state.ranges.filter(function(r){
+      return ! ((r.type==type) && (start>=r.start && start<r.start+r.len));
+    });
+    this.setState({ranges:ranges});
+    console.log("clear",type,start);
+  },
   getClass:function(i) {
-    return this.state.ranges.map(function(r){
+    var out=[];
+    this.state.ranges.map(function(r){
       var classes="";
       if (i>=r.start && i<r.start+r.len) {
         classes=r.type;
         if (i==r.start) classes+=" "+r.type+"_b";
         if (i==r.start+r.len-1) classes+=" "+r.type+"_e";
       }
-      return classes;
+      if (classes) out.push(classes);
     },this);
+    return out;
   },
   getRange:function() {
     var sel = getSelection();
@@ -64,13 +74,21 @@ var textview = React.createClass({
     }
 
     //sel.empty();
-    //this.refs.surface.getDOMNode().focus();
+   //this.refs.surface.getDOMNode().focus();
     return {start:start,len:length};
   },
   mouseUp:function(e) {
     var sel=this.getSelection();
+    if (!sel) return;
     var x=e.pageX,y=e.pageY;
-    this.props.action("selection",{start:sel.start,len:sel.len, x:x,y:y, view:this } );
+    if (sel.len>0) {
+      this.props.action("selection",{start:sel.start,len:sel.len, x:x,y:y, view:this } );  
+    } else {
+      var classes=this.getClass(sel.start+1);
+      if (classes.length) {
+        this.props.action("clearMarkup",{start:sel.start,markups:classes, x:x, y:y ,view:this});
+      }
+    }    
     e.preventDefault();
   },
   toXML:function(s) {

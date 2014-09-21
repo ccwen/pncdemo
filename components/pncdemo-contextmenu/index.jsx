@@ -14,7 +14,7 @@ var contextmenu=React.createClass({
     var i=e.target.dataset.i;
     var handler=this.props.menuitems[i].handler;
     if (handler) {
-      handler.apply(this.props.context,[this.props.payload]);
+      handler.apply(this.props.context,[this.props.payload,i]);
     }
     this.hideDropdown();
   },
@@ -29,6 +29,7 @@ var contextmenu=React.createClass({
   render:function() {
     return <div className="dropdown" ref="menu">
     <ul className="dropdown-menu" role="menu">
+      <li role="presentation" className="dropdown-header">{this.props.payload.header}</li>
       {this.props.menuitems.map(this.renderItem,this)}
     </ul>
     </div>
@@ -36,8 +37,8 @@ var contextmenu=React.createClass({
   showDropdown:function(x,y) {
     //$(".dropdown").dropdown();
     var menu=this.refs.menu.getDOMNode();
-    menu.style.left=x+'px';
-    menu.style.top=y+'px';
+    menu.style.left=(parseInt(x)+5)+'px';
+    menu.style.top=(parseInt(y)-45)+'px'; //header size
     menu.classList.add("open");
   },
   hideDropdown:function() {
