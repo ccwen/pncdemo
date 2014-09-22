@@ -48,7 +48,7 @@ var contextmenu=React.createClass({
     $(this.refs.menu.getDOMNode()).dropdown();
   },
   componentDidUpdate:function() {
-    if (this.props.payload) this.showDropdown(this.props.payload.x,this.props.payload.y);
+    if (this.props.menuitems.length) this.showDropdown(this.props.payload.x,this.props.payload.y);
     else this.hideDropdown();
   }
 });

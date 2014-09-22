@@ -5,6 +5,7 @@ Require("bootstrap");
 var contextmenu=Require("contextmenu");
 var stackview=Require("stackview"); 
 var textview=Require("textview");
+var markuppanel=Require("markuppanel");
 var main = React.createClass({
   selection_menuitems:function() {
     return [
@@ -67,9 +68,9 @@ var main = React.createClass({
       if (opts.len || action=="clearMarkup") {
         this.setState({menuitems:menuitems,menupayload:payload});
       } else {
-        this.setState({menupayload:null});
+        this.setState({menuitems:[],menupayload:{}});
       }
-    }
+    } 
   },
   clickme:function() {
     //
@@ -77,6 +78,7 @@ var main = React.createClass({
   render: function() {
     return (
       <div id="main">
+        <markuppanel/>
         <contextmenu menuitems={this.state.menuitems} payload={this.state.menupayload}/>
         <div className="col-md-6">
           <stackview view={textview} action={this.action} views={this.state.views}/>

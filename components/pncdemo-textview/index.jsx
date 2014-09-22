@@ -87,7 +87,10 @@ var textview = React.createClass({
       var classes=this.getClass(sel.start+1);
       if (classes.length) {
         this.props.action("clearMarkup",{start:sel.start,markups:classes, x:x, y:y ,view:this});
+      } else {
+        this.props.action("selection",{start:sel.start,x:x,y:y,len:0,view:this});
       }
+
     }    
     e.preventDefault();
   },

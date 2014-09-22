@@ -16,7 +16,8 @@
     "pncdemo/main": "*",
     "pncdemo/comp1": "*",
     "pncdemo/textview": "*",
-    "pncdemo/contextmenu": "*"
+    "pncdemo/contextmenu": "*",
+    "pncdemo/markuppanel": "*"
   },
   "development": {},
   "paths": [
