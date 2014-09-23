@@ -4,10 +4,11 @@
 
 //var othercomponent=Require("other"); 
 var markups=[
-   {caption:"pointer",type:null}
+   {caption:"Pointer",type:null}
   ,{caption:"Person",type:"person"}
   ,{caption:"Place",type:"place"}
-  ,{caption:"Translation",type:"Translation",selection:2 }
+  ,{caption:"Translation",type:"translation",selection:2 }
+  ,{caption:"Footnote",type:"footnote"}
 ];
 var markuppanel = React.createClass({
   getInitialState: function() {
@@ -18,7 +19,7 @@ var markuppanel = React.createClass({
     var color="btn-primary";
 //    if (m.selection>1) color="btn-success";
     if (idx==0) extra=" active";
-    return <label data-type={m.type} className={"btn "+color+extra}>
+    return <label key={idx} data-type={m.type} className={"btn "+color+extra}>
       <input type="radio" name="markup" checked={idx==0}></input>{m.caption}
     </label>
   },

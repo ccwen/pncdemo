@@ -1,0 +1,20 @@
+one selection.
+  onMouseDown
+     if (ctrlKey) {
+     	 no_action (keep the previous selection)
+     } else {
+       clearSelection
+     }
+  onMouseUp
+     if (ctrlKey) addRange
+     else fireMarkup
+
+fireMarkup
+    one Selection markup
+
+    two selection markup ( state )
+
+clear Markup
+   when hover on a markup , an delete button is shown on the side,
+   click to remove markup
+
