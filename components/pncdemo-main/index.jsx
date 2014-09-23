@@ -41,6 +41,9 @@ var main = React.createClass({
       return {caption:baseclass, handler:this.clearMarkup}
     },this); 
   },
+  showHoverMenu:function() {
+    return false;
+  },
   action: function() {
     var args = [];
     Array.prototype.push.apply( args, arguments );
@@ -51,7 +54,7 @@ var main = React.createClass({
       payload=this.getMenuPayload(opts);
     } else if (action=="appendSelection") {
       payload=this.getMenuPayload(opts);
-    } else if (action=="hoverToken") {
+    } else if (action=="hoverToken" && this.showHoverMenu() ) {
       if (this.state.hoverToken!=opts.token) {
         this.setState({hoverToken:opts.token, x:opts.x, y:opts.y});  
       }

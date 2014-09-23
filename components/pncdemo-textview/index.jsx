@@ -70,6 +70,9 @@ var textview = React.createClass({
       }
     }    
   },
+  hasMarkupAt:function(n) {
+    return false;
+  },
   checkTokenUnderMouse:function(target,x,y) {
     //var rect=this.getDOMNode().getBoundingClientRect();
     //x-=rect.left;
@@ -77,7 +80,7 @@ var textview = React.createClass({
     if (!target) return;
     if (target.nodeName!="SPAN") return;
     var n=target.dataset['n'];
-    var hasmarkup=true;
+    var hasmarkup=this.hasMarkupAt(n);
     if (hasmarkup) {
       if (this.state.hoverToken!=target) { //do not refresh if hovering on same token
         this.props.action("hoverToken",{view:this,token:target,x:x,y:y});
@@ -89,13 +92,19 @@ var textview = React.createClass({
     }
     //this.props.action("mousemove",{view:this}); //notify caller, for onBlur Event
   },
+  stillInView:function(relatedTarget)  {
+    return relatedTarget &&
+       (relatedTarget.className=="hovermenu" ||
+        (relatedTarget.parentElement && relatedTarget.parentElement.className=="hovermenu"));
+  },
+  clearHoverIfOutOfView:function(relatedTarget){
+      var stillInView=this.stillInView(relatedTarget);
+      if (stillInView) return;
+      if (this.state.hoverN>-1) this.setState({hoverN:-1});
+  },
   mouseOut:function(e) {
     clearTimeout(this.mousetimer);
-    var that=this;
-    this.mousetimer=setTimeout(function(){
-      if (that.state.hoverN>-1) that.setState({hoverN:-1});
-      console.log("mouseout")
-    },100);
+    this.mousetimer=setTimeout(this.clearHoverIfOutOfView.bind(this,e.relatedTarget),100);
   },
   mouseMove:function(e) {
     clearTimeout(this.mousetimer);
