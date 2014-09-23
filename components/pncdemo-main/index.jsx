@@ -6,11 +6,12 @@ var contextmenu=Require("contextmenu");
 var stackview=Require("stackview"); 
 var textview=Require("textview");
 var markuppanel=Require("markuppanel");
+var hoverMenu=Require("hovermenu");
 var testdata=require('./testdata');
 var main = React.createClass({
   selection_menuitems:function() {
     return [
-      {caption:"Add",handler:this.addSelection, previousView:null}
+      //{caption:"Add",handler:this.addSelection, previousView:null}
     ]
   },
   getInitialState: function() {
@@ -19,10 +20,6 @@ var main = React.createClass({
       menupayload:{},
       views:testdata,
     };
-  },
-  addSelection:function(opts,idx) {
-    //console.log("add",opts);
-    opts.view.addRange("selected",opts.selstart,opts.sellength);
   },
   clearMarkup:function(opts,idx) {
     //console.log("clearMarkup");
@@ -44,30 +41,21 @@ var main = React.createClass({
       return {caption:baseclass, handler:this.clearMarkup}
     },this); 
   },
-
   action: function() {
     var args = [];
     Array.prototype.push.apply( args, arguments );
     var action=args.shift();
-    if (action=="selection" ) {
-     
-      var opts=args[0];
-      var payload=this.getMenuPayload(opts);
-    //  var menuitems=this.selection_menuitems();
-       /*
-      if (action=="clearMarkup") {
-        menuitems=this.createMarkupMenuItems(opts.markups);
-        payload.header="Clear";
+    var opts=args[0];
+    var payload=null;
+    if (action=="doMarkup" ) {
+      payload=this.getMenuPayload(opts);
+    } else if (action=="appendSelection") {
+      payload=this.getMenuPayload(opts);
+    } else if (action=="hoverToken") {
+      if (this.state.hoverToken!=opts.token) {
+        this.setState({hoverToken:opts.token, x:opts.x, y:opts.y});  
       }
-
-      if (opts.len || action=="clearMarkup") {
-        this.setState({menuitems:menuitems,menupayload:payload});
-      } else {
-        this.setState({menuitems:[],menupayload:{}});
-      }
-      */
-      this.setState({previousView:payload.view});
-    } 
+    }
   },
   clickme:function() {
     //
@@ -77,7 +65,10 @@ var main = React.createClass({
     return (
       <div id="main">
         <markuppanel/>
+
         <div>
+        <hoverMenu action={this.action} 
+          target={this.state.hoverToken} x={this.state.x} y={this.state.y}/>
         <div className="col-md-3">
           <stackview view={textview} action={this.action} views={this.state.views[0]}/>
         </div>

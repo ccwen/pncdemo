@@ -23,7 +23,7 @@ var markuppanel = React.createClass({
       <input type="radio" name="markup" checked={idx==0}></input>{m.caption}
     </label>
   },
-  render: function() {
+  render: function() { 
     return (
       <div className="btn-group" data-toggle="buttons">
         {this.state.markups.map(this.renderMarkupButtons)}

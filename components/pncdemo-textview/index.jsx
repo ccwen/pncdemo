@@ -9,6 +9,7 @@
 */
 var tokenize=Require("ksana-document").tokenizers.simple; 
 var getselection=require("./selection");
+
 var textview = React.createClass({
   getInitialState: function() {
     return {bar: "world", selections:[] };
@@ -18,7 +19,9 @@ var textview = React.createClass({
     selections.push([start-1,len]);
     this.setState({selections:selections});
     window.getSelection().empty();
+    return selections;
   },
+
   clearMarkup:function(type,start) {
     /*
     start++;//should remove it in the future
@@ -44,7 +47,6 @@ var textview = React.createClass({
     },this);
     return out;
   },
-
   clearSelection:function() {
     if (this.state.selections.length) {
       this.setState({selections:[]});
@@ -55,15 +57,53 @@ var textview = React.createClass({
   },
   mouseUp:function(e) {
     var sel=getselection();
+    var x=e.pageX,y=e.pageY;
     if (e.ctrlKey && sel && sel.len) {
-      this.addSelection(sel.start,sel.len);
+      var selections=this.addSelection(sel.start,sel.len);
+      this.props.action("appendSelection",{selections:selections,x:x,y:y,view:this});
     } else {
-      var x=e.pageX,y=e.pageY;
-      var selections=this.state.selections;
-      selections.push([sel.start,sel.len]);
-      this.props.action("selection",{selections:selections, x:x,y:y, view:this});  
-      this.clearSelection();
+      if (sel.len) {
+        var selections=this.addSelection(sel.start,sel.len);
+        this.props.action("markup",{selections:selections, x:x,y:y, view:this});        
+      } else {
+        this.clearSelection();
+      }
     }    
+  },
+  checkTokenUnderMouse:function(target,x,y) {
+    //var rect=this.getDOMNode().getBoundingClientRect();
+    //x-=rect.left;
+    //y-=rect.top;
+    if (!target) return;
+    if (target.nodeName!="SPAN") return;
+    var n=target.dataset['n'];
+    var hasmarkup=true;
+    if (hasmarkup) {
+      if (this.state.hoverToken!=target) { //do not refresh if hovering on same token
+        this.props.action("hoverToken",{view:this,token:target,x:x,y:y});
+        this.setState({hoverN:n});
+      }
+    } else {
+      this.props.action("hoverToken",{view:this,token:null});
+      this.setState({hoverN:-1});
+    }
+    //this.props.action("mousemove",{view:this}); //notify caller, for onBlur Event
+  },
+  mouseOut:function(e) {
+    clearTimeout(this.mousetimer);
+    var that=this;
+    this.mousetimer=setTimeout(function(){
+      if (that.state.hoverN>-1) that.setState({hoverN:-1});
+      console.log("mouseout")
+    },100);
+  },
+  mouseMove:function(e) {
+    clearTimeout(this.mousetimer);
+    this.mousetimer=setTimeout( 
+      this.checkTokenUnderMouse.bind(this,e.target,e.pageX,e.pageY),100);
+  },
+  isHovering:function(i){
+    return (this.state.hoverN==i+1);//should check the entire markup range.
   },
   toXML:function(s) {
     var res=tokenize(s);
@@ -72,17 +112,21 @@ var textview = React.createClass({
       if (res.tokens[i]=="\n") {
         out.push(<br/>);
         continue;
-      }
+      } 
       var classes=this.rangeToClasses(this.state.selections,i).join(" ");
-      out.push(<span data-n={i+1} className={classes} key={"k"+i}>{res.tokens[i]}</span>);
+      if (this.isHovering(i)) classes+= " hovering";
+      out.push(<span data-n={i+1} onMouseDown={this.mouseDown}
+        className={classes} key={"k"+i}>{res.tokens[i]}</span>);
     }
     return out;
   },
   render: function() {
     return (
       <div>
-        <div className="textview" onMouseUp={this.mouseUp} onMouseDown={this.mouseDown}>
-          {this.toXML(this.props.text)}
+        <div className="textview" 
+          onMouseUp={this.mouseUp}
+          onMouseOut={this.mouseOut}
+          onMouseMove={this.mouseMove}>{this.toXML(this.props.text)}
         </div>
       </div>
     );
