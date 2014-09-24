@@ -22,7 +22,7 @@ var markfootnote = React.createClass({
     this.props.action("applyMarkup",args);
   },
   cancel:function(opts) {
-    console.log("CANCEL");
+    this.props.action("clearSelection");
   }, 
   renderBody:function() {
     return <div>

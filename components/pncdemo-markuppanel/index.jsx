@@ -3,9 +3,9 @@
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
 var markups=[
    {caption:"Pointer",type:null,dialog: Require("markpointer")} //nothing happen
-  ,{caption:"Person", type:"person", dialog: Require("markperson") } //immediate single view markup
-  ,{caption:"Footnote", type:"footnote",dialog:Require("markfootnote")}  //single view dialog markup
-  ,{caption:"Correspondance",type:"correspond",dialog:Require("markcorrespond")} //dual view markup
+  ,{caption:"Person", type:"person", dialog: Require("markperson")  } //immediate single view markup
+  ,{caption:"Footnote", type:"footnote",dialog:Require("markfootnote"),editable:true}  //single view dialog markup
+  ,{caption:"Correspondance",type:"correspond",dialog:Require("markcorrespond"),editable:true} //dual view markup
 ];
 
 var markuppanel = React.createClass({
@@ -15,7 +15,7 @@ var markuppanel = React.createClass({
   activateMarkup:function(e) {
     var n=e.target.dataset['n'];
     var m=markups[n];
-    this.props.action("setMarkupDialog",{type:m.type,dialog:m.dialog, title:m.caption});
+    this.props.action("setMarkupDialog",{type:m.type,dialog:m.dialog, title:m.caption,editable:m.editable});
     this.setState({selected:n});
   },
   renderMarkupButtons:function(m,idx) {

@@ -4,13 +4,10 @@
 /*
   if ctrlKey is pressed, do not fired the default markup behavior
   , instead, append the selection.
-
   use border-bottom and padding-bottom for multiple underline
-
-  calculate underline level
-     for each token, see how many markup in range.
-
+  show certain type of markup
 */
+
 var tokenize=Require("ksana-document").tokenizers.simple; 
 var getselection=require("./selection");
 
@@ -21,9 +18,15 @@ var textview = React.createClass({
     this.extraCount=0;
     this.footNoteCount=0;
   },
+  shouldComponentUpdate:function(nextProps,nextState) {
+    var textchanged=(nextProps.text!=this.props.text);
+    if (textchanged) this.tokenized=null;
+    //return textchanged;
+    return true;
+  },
   getInitialState: function() {
     this.resetCount();
-    return {bar: "world", ranges:[] , markups:[]};
+    return {ranges:[] , markups:[]};
   },
   componentWillUpdate:function() {
     this.resetCount();
@@ -33,6 +36,9 @@ var textview = React.createClass({
     ranges.push([start-1,len]);
     this.setState({ranges:ranges});
     return ranges;
+  },
+  sameMarkup:function(m1,m2) {//this is stupid
+    return (m1[0]==m2[0] && m1[1]==m2[1] && m1[2] && m2[2]);
   },
   action:function() {
     var args = [];
@@ -45,6 +51,13 @@ var textview = React.createClass({
       this.applyMarkup.apply(this,args);
     } else if (action=="clearRanges") {
       this.clearRanges();
+    } else if (action=="deleteMarkup") {
+      var markups=this.state.markups.filter(function(m){
+        return !this.sameMarkup(m,opts);
+      },this);
+      if (markups.length!=this.state.markups.length) {
+        this.setState({markups:markups});
+      }
     }
   },
   clearMarkup:function(type,start) {
@@ -67,13 +80,14 @@ var textview = React.createClass({
   rangeToClasses:function(arr,i,prefix) {
     var out=[];
     arr.map(function(r){
-      var classes="",start=r[0],len=r[1];
-      var basetype=r[2]||"selected";
-      if (prefix) basetype=prefix+basetype;
-      if (i>=start && i<start+len) {
-        classes=basetype;
-        if (i==start) classes+=" "+basetype+"_b";
-        if (i==start+len-1) classes+=" "+basetype+"_e";
+      var classes="",start=r[0],len=r[1],type=r[2], markuptype=this.props.extra.markuptype;
+      var baseclass=r[2]||"selected";
+      if (prefix) baseclass=prefix+baseclass;
+      var typemissmatch=(markuptype && type && markuptype!=type );
+      if (i>=start && i<start+len && !typemissmatch) {
+        classes=baseclass;
+        if (i==start) classes+=" "+baseclass+"_b";
+        if (i==start+len-1) classes+=" "+baseclass+"_e";
       }
       if (classes) out.push(classes);
     },this);
@@ -81,7 +95,7 @@ var textview = React.createClass({
   },
   clearRanges:function() {
     if (this.state.ranges.length) {
-      this.setState({ranges:[]});
+      this.setState({ranges:[],hoverMarkup:null});
     }
     //this.clearWindowSelection();
   },
@@ -104,15 +118,16 @@ var textview = React.createClass({
       }
     }    
   },
-  markupAt:function(n) {
+  markupAt:function(n,type) {
     return this.state.markups.filter(function(m){
       var start=m[0],len=m[1];
-      return (n>=start && n<start+len);
+      var typemissmatch=(type && m[2]!=type );
+      return (n>=start && n<start+len && !typemissmatch);
     });
   },
   extraElement:function(n) {
     var out=[];
-    var markups=this.markupAt(n);
+    var markups=this.markupAt(n,this.props.extra.markuptype);
     if (!markups.length) return out;
     markups.map(function(m){
       var start=m[0],len=m[1],type=m[2],payload=m[3];
@@ -128,28 +143,22 @@ var textview = React.createClass({
     },this);
     return out;
   },
-  hasMarkupAt:function(n) {
-    //find the closest markup
-    //for (var i=0;i<)
-    //mark it selected
-    return false;
-  },
   checkTokenUnderMouse:function(target,x,y) {
     //var rect=this.getDOMNode().getBoundingClientRect();
     //x-=rect.left;
     //y-=rect.top;
     if (!target) return;
     if (target.nodeName!="SPAN") return;
-    var n=target.dataset['n'];
-    var hasmarkup=this.hasMarkupAt(n);
-    if (hasmarkup) {
+    var n=parseInt(target.dataset['n']);
+    var markups=this.markupAt(n-1,this.props.extra.markuptype); //n-1 is a workaround
+    if (markups.length) {
       if (this.state.hoverToken!=target) { //do not refresh if hovering on same token
-        this.props.action("hoverToken",{view:this,token:target,x:x,y:y});
-        this.setState({hoverN:n});
+        this.props.action("hoverToken",{view:this,token:target,markup:markups[0],x:x,y:y});
+        this.setState({hoverMarkup:markups[0]});
       }
     } else {
       this.props.action("hoverToken",{view:this,token:null});
-      this.setState({hoverN:-1});
+      this.setState({hoverMarkup:null});
     }
     //this.props.action("mousemove",{view:this}); //notify caller, for onBlur Event
   },
@@ -161,7 +170,7 @@ var textview = React.createClass({
   clearHoverIfOutOfView:function(relatedTarget){
       var stillInView=this.stillInView(relatedTarget);
       if (stillInView) return;
-      if (this.state.hoverN>-1) this.setState({hoverN:-1});
+      if (this.state.hoverMarkup) this.setState({hoverMarkup:null});
   },
   mouseOut:function(e) {
     clearTimeout(this.mousetimer);
@@ -173,20 +182,23 @@ var textview = React.createClass({
       this.checkTokenUnderMouse.bind(this,e.target,e.pageX,e.pageY),100);
   },
   isHovering:function(i){
-    return (this.state.hoverN==i+1);//should check the entire markup range.
+    var M=this.state.hoverMarkup;
+    if (!M) return false;
+    var start=M[0],len=M[1];
+    return (i>=start && i<start+len);
   },
   toXML:function(s) {
-    var res=tokenize(s);
-    var out=[];
-    for (var i=0;i<res.tokens.length;i++) {
-      if (res.tokens[i]=="\n") {
+    if (!this.tokenized) this.tokenized=tokenize(s);
+    var out=[],tokens=this.tokenized.tokens;
+    for (var i=0;i<tokens.length;i++) {
+      if (tokens[i]=="\n") {
         out.push(<br key={"k"+i}/>);
         continue;
       } 
       var classes=this.rangeToClasses(this.state.ranges,i).join(" ");
       classes+=" "+this.rangeToClasses(this.state.markups,i,"markup_").join(" ");
       classes=classes.trim();
-      if (this.isHovering(i)) classes+= " hovering";
+      if (this.isHovering(i)) classes= " hovering";//highest priority
 
       var attributes={
         onMouseDown:this.mouseDown
@@ -194,7 +206,7 @@ var textview = React.createClass({
         ,key:"k"+i
         ,"data-n":i+1
       };
-      out.push(React.DOM.span(attributes,res.tokens[i]));
+      out.push(React.DOM.span(attributes,tokens[i]));
       var extra=this.extraElement(i);
       if (extra.length) out=out.concat(extra);
     }

@@ -5,16 +5,19 @@
 //var othercomponent=Require("other"); 
 var hovermenu = React.createClass({
   getInitialState: function() {
-    return {editable:this.props.editable};
+    return {};
   },
   renderEditButton:function() {//invoke the dialog
     return <button className="btn btn-xs btn-primary">Change</button>
   },
+  deleteMarkup:function(e) {
+    this.props.action("deleteMarkup");
+  },
   render: function() {
     return (
       <div className="hovermenu"> 
-        {this.state.editable?renderEditButton():null}
-        <button className="btn btn-xs btn-danger">{"\u2716"}</button>
+        {this.props.editable?this.renderEditButton():null}
+        <button onClick={this.deleteMarkup} className="btn btn-xs btn-danger">{"\u2716"}</button>
       </div>
     );
   },
