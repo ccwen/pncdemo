@@ -33,7 +33,7 @@ var getselection=function() {
     else length=end-start;
     //if (range.endOffset>range.startOffset &&!length) length=1;
     if (length<0) {
-        temp=end; end=start; start=end;
+        var temp=end; end=start; start=end;
     }
   }
 

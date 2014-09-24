@@ -1,6 +1,6 @@
 {
-  "name": "main",
-  "repo": "pncdemo/main",
+  "name": "markperson",
+  "repo": "pncdemo/markperson",
   "description": "hello world",
   "version": "0.0.1",
   "keywords": [],
@@ -8,6 +8,6 @@
   "development": {},
   "license": "MIT",
   "main": "index.js",
-  "scripts": ["index.js","testdata.js","selections.js"],
+  "scripts": ["index.js"],
   "styles": ["index.css"]
 }

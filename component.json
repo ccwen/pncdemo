@@ -13,12 +13,17 @@
     "ksanaforge/htmlfs": "*",
     "ksanaforge/stackview": "*",
     "ksanaforge/splitter": "*",
+    "ksanaforge/markupdialogmixin": "*",
     "pncdemo/main": "*",
     "pncdemo/comp1": "*",
     "pncdemo/textview": "*",
     "pncdemo/contextmenu": "*",
     "pncdemo/markuppanel": "*",
-    "pncdemo/hovermenu": "*"
+    "pncdemo/hovermenu": "*",
+    "pncdemo/markplace": "*",
+    "pncdemo/markperson": "*",
+    "pncdemo/markcorrespond": "*",
+    "pncdemo/markfootnote": "*"
   },
   "development": {},
   "paths": [

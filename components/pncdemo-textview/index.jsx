@@ -64,8 +64,9 @@ var textview = React.createClass({
     } else {
       if (sel.len) {
         var selections=this.addSelection(sel.start,sel.len);
-        this.props.action("markup",{selections:selections, x:x,y:y, view:this});        
+        this.props.action("selection",{selections:selections, x:x,y:y, view:this});        
       } else {
+        this.props.action("selection",{selections:null,view:this});
         this.clearSelection();
       }
     }    
@@ -119,7 +120,7 @@ var textview = React.createClass({
     var out=[];
     for (var i=0;i<res.tokens.length;i++) {
       if (res.tokens[i]=="\n") {
-        out.push(<br/>);
+        out.push(<br key={"k"+i}/>);
         continue;
       } 
       var classes=this.rangeToClasses(this.state.selections,i).join(" ");
