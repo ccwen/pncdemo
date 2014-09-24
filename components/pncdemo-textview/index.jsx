@@ -12,7 +12,7 @@ var getselection=require("./selection");
 
 var textview = React.createClass({
   getInitialState: function() {
-    return {bar: "world", ranges:[] };
+    return {bar: "world", ranges:[] , markups:[]};
   },
   addSelection:function(start,len) {
     var ranges=this.state.ranges;
@@ -34,13 +34,18 @@ var textview = React.createClass({
     */
   },
   applyMarkup:function(type,ranges) {
-    console.log("apply",type,ranges)
+    var markups=this.state.markups;
+    ranges.map(function(r){
+      markups.push([r[0],r[1],type]);
+    })
+    this.setState({markups:markups});
   },
-  rangeToClasses:function(arr,i) {
+  rangeToClasses:function(arr,i,prefix) {
     var out=[];
     arr.map(function(r){
       var classes="",start=r[0],len=r[1];
       var basetype=r[2]||"selected";
+      if (prefix) basetype=prefix+basetype;
       if (i>=start && i<start+len) {
         classes=basetype;
         if (i==start) classes+=" "+basetype+"_b";
@@ -128,6 +133,8 @@ var textview = React.createClass({
         continue;
       } 
       var classes=this.rangeToClasses(this.state.ranges,i).join(" ");
+      classes+=" "+this.rangeToClasses(this.state.markups,i,"markup_").join(" ");
+      classes=classes.trim();
       if (this.isHovering(i)) classes+= " hovering";
       out.push(<span data-n={i+1} onMouseDown={this.mouseDown}
         className={classes} key={"k"+i}>{res.tokens[i]}</span>);
