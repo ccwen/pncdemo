@@ -20,10 +20,10 @@
     "pncdemo/contextmenu": "*",
     "pncdemo/markuppanel": "*",
     "pncdemo/hovermenu": "*",
-    "pncdemo/markplace": "*",
     "pncdemo/markperson": "*",
     "pncdemo/markcorrespond": "*",
-    "pncdemo/markfootnote": "*"
+    "pncdemo/markfootnote": "*",
+    "pncdemo/markpointer": "*"
   },
   "development": {},
   "paths": [

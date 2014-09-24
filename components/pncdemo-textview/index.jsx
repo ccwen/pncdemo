@@ -12,16 +12,17 @@ var getselection=require("./selection");
 
 var textview = React.createClass({
   getInitialState: function() {
-    return {bar: "world", selections:[] };
+    return {bar: "world", ranges:[] };
   },
   addSelection:function(start,len) {
-    var selections=this.state.selections;
-    selections.push([start-1,len]);
-    this.setState({selections:selections});
-    window.getSelection().empty();
-    return selections;
+    var ranges=this.state.ranges;
+    ranges.push([start-1,len]);
+    this.setState({ranges:ranges});
+    return ranges;
   },
-
+  clearWindowSelection:function() {
+    window.getSelection().empty();
+  },
   clearMarkup:function(type,start) {
     /*
     start++;//should remove it in the future
@@ -47,10 +48,11 @@ var textview = React.createClass({
     },this);
     return out;
   },
-  clearSelection:function() {
-    if (this.state.selections.length) {
-      this.setState({selections:[]});
+  clearRanges:function() {
+    if (this.state.ranges.length) {
+      this.setState({ranges:[]});
     }
+    //this.clearWindowSelection();
   },
   mouseDown:function(e) {
     //if (e.ctrlKey) console.log("ctrl");
@@ -59,15 +61,15 @@ var textview = React.createClass({
     var sel=getselection();
     var x=e.pageX,y=e.pageY;
     if (e.ctrlKey && sel && sel.len) {
-      var selections=this.addSelection(sel.start,sel.len);
-      this.props.action("appendSelection",{selections:selections,x:x,y:y,view:this});
+      var ranges=this.addSelection(sel.start,sel.len);
+      this.props.action("appendSelection",{ranges:ranges,x:x,y:y,view:this});
     } else {
       if (sel.len) {
-        var selections=this.addSelection(sel.start,sel.len);
-        this.props.action("selection",{selections:selections, x:x,y:y, view:this});        
+        var ranges=this.addSelection(sel.start,sel.len);
+        this.props.action("selection",{ranges:ranges, x:x,y:y, view:this});        
       } else {
-        this.props.action("selection",{selections:null,view:this});
-        this.clearSelection();
+        this.props.action("selection",{ranges:null,view:this});
+        this.clearRanges();
       }
     }    
   },
@@ -123,7 +125,7 @@ var textview = React.createClass({
         out.push(<br key={"k"+i}/>);
         continue;
       } 
-      var classes=this.rangeToClasses(this.state.selections,i).join(" ");
+      var classes=this.rangeToClasses(this.state.ranges,i).join(" ");
       if (this.isHovering(i)) classes+= " hovering";
       out.push(<span data-n={i+1} onMouseDown={this.mouseDown}
         className={classes} key={"k"+i}>{res.tokens[i]}</span>);

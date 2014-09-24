@@ -2,18 +2,19 @@
 
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
 
-var mixin=Require("markupdialogmixin");
 var markfootnote = React.createClass({
   getInitialState: function() {
-    return {bar: "world"};
+     return {
+        test: 'test'
+      };
   },
-  mixins: [mixin],
+  mixins: [Require("markupdialogmixin")],
+
+  renderBody:function() {
+    return <div>foot node</div>
+  },
   render: function() {
-    return (
-      <div>
-        add foot note
-      </div>
-    );
+    return this.renderDialog(this.renderBody);
   }
 });
 module.exports=markfootnote;

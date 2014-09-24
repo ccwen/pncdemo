@@ -5,14 +5,14 @@
 //var othercomponent=Require("other"); 
 var markperson = React.createClass({
   getInitialState: function() {
-    return {bar: "world"};
+     return {};
+  },
+  mixins: [Require("markupdialogmixin")],
+  action:function(opts) {
+    console.log(opts.selections)
   },
   render: function() {
-    return (
-      <div>
-        Hello,{this.state.bar}
-      </div>
-    );
+    return null;
   }
 });
 module.exports=markperson;

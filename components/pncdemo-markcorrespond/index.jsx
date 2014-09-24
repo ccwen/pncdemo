@@ -2,17 +2,22 @@
 
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
 
-//var othercomponent=Require("other"); 
 var markcorrespond = React.createClass({
   getInitialState: function() {
-    return {bar: "world"};
+     return {
+        test: 'test'
+      };
+  },
+  mixins: [Require("markupdialogmixin")],
+  action:function(opts) {
+    if (opts.selections.length<2) return;
+    this.show();
+  },
+  renderBody:function() {
+    return <div>corresponding link</div>
   },
   render: function() {
-    return (
-      <div>
-        Hello,{this.state.bar}
-      </div>
-    );
+    return this.renderDialog(this.renderBody);
   }
 });
 module.exports=markcorrespond;

@@ -3,16 +3,16 @@
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
 
 //var othercomponent=Require("other"); 
-var markplace = React.createClass({
+var markpointer = React.createClass({
   getInitialState: function() {
-    return {bar: "world"};
+     return {};
+  },
+  mixins: [Require("markupdialogmixin")],
+  action:function(opts) {
+    this.props.action("clearSelection",{keepWindowSelection:true});
   },
   render: function() {
-    return (
-      <div>
-        Hello,{this.state.bar}
-      </div>
-    );
+    return null;
   }
 });
-module.exports=markplace;
+module.exports=markpointer;
