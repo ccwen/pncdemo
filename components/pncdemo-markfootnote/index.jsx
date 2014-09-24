@@ -4,7 +4,7 @@
 
 var markfootnote = React.createClass({
   getInitialState: function() {
-     return { };
+     return { type: this.props.type || "footnote"};
   },
   mixins: [Require("markupdialogmixin")],
   allow:function(opts) {
@@ -14,19 +14,23 @@ var markfootnote = React.createClass({
   execute:function() {
 
   },
-  ok:function() {
-    console.log("OKOK");
+  ok:function(opts) {
+    var note=this.refs.note.getDOMNode().value;
+    var payload={insert:"end",note:note};
+    this.refs.note.getDOMNode().value="";
+    var args={selections:opts.selections,type:this.state.type,payload:payload};
+    this.props.action("applyMarkup",args);
   },
-  cancel:function() {
+  cancel:function(opts) {
     console.log("CANCEL");
   }, 
   renderBody:function() {
     return <div>
-    <textarea ref="footnote" className="form-control"></textarea>
+    <textarea ref="note" className="form-control"></textarea>
     </div>   
   }, 
   onShow:function() {
-    this.refs.footnote.getDOMNode().focus();
+    this.refs.note.getDOMNode().focus();
   }, 
   render: function() {
     return this.renderDialog(this.renderBody);

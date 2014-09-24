@@ -1,7 +1,7 @@
 var selections=[];
 var applyMarkup=function(opts) {
 	opts.selections.map(function(s){
-		s[0].action("applyMarkup",opts.type,s[1]);
+		s[0].action("applyMarkup",opts.type,s[1],opts.payload);
 	});
 }
 var clear=function(opts){

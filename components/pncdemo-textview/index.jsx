@@ -15,14 +15,18 @@ var tokenize=Require("ksana-document").tokenizers.simple;
 var getselection=require("./selection");
 
 var footnote1=[5,2,"footnote",{insert:"end",content:"2",note:"footnote footnote"}];
-var footnote2=[5,2,"footnote2",{insert:"end",content:"3",note:"footnote footnote"}];
+var footnote2=[5,2,"footnote2",{insert:"end",note:"footnote footnote"}];
 var textview = React.createClass({
-  getInitialState: function() {
+  resetCount:function() {
     this.extraCount=0;
-    return {bar: "world", ranges:[] , markups:[footnote1,footnote2]};
+    this.footNoteCount=0;
+  },
+  getInitialState: function() {
+    this.resetCount();
+    return {bar: "world", ranges:[] , markups:[]};
   },
   componentWillUpdate:function() {
-    this.extraCount=0;
+    this.resetCount();
   },
   addSelection:function(start,len) {
     var ranges=this.state.ranges;
@@ -53,10 +57,10 @@ var textview = React.createClass({
     console.log("clear",type,start);
     */
   },
-  applyMarkup:function(type,ranges) {
+  applyMarkup:function(type,ranges,payload) {
     var markups=this.state.markups;
     ranges.map(function(r){
-      markups.push([r[0],r[1],type]);
+      markups.push([r[0],r[1],type,payload]);
     })
     this.setState({markups:markups});
   },
@@ -115,8 +119,11 @@ var textview = React.createClass({
       if (!payload || !payload.insert) return;
       if ( (payload.insert=="end" && n==start+len-1)
       || (payload.insert=="start" && n==start) ){
+        if (type.substr(0,8)=="footnote") this.footNoteCount++;
+        var content=payload.content||this.footNoteCount;
         var dataset={className:"extra_"+type,"data-n":n,key:this.extraCount++};
-        out.push(React.DOM.span(dataset,"\u00a0"+payload.content+"\u00a0"));
+        //force 1em space
+        out.push(React.DOM.span(dataset,"\u00a0"+content+"\u00a0"));
       }
     },this);
     return out;

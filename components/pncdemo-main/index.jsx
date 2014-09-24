@@ -71,18 +71,19 @@ var main = React.createClass({
         this.setState({hoverToken:opts.token, x:opts.x, y:opts.y});  
       }
     } else if (action=="setMarkupDialog") {
-      this.setState({markupdialog:opts.dialog, markupdialogtitle:opts.title});
+      this.setState({markupdialog:opts.dialog, markupdialog_type:opts.type,markupdialog_title:opts.title});
     } else if (action=="clearSelection") {
       selections.clear(opts);
     } else if (action=="applyMarkup") {
       selections.applyMarkup(opts);
+      this.action("clearSelection");
     }
   },
   render: function() {
     return (
       <div id="main">
         <markuppanel action={this.action}/>
-        {this.state.markupdialog?this.state.markupdialog({ref:"markupdialog",action:this.action,title:this.state.markupdialogtitle}):null}
+        {this.state.markupdialog?this.state.markupdialog({ref:"markupdialog",action:this.action,type:this.state.markupdialog_type,title:this.state.markupdialog_title}):null}
         <div>
         <hoverMenu action={this.action} 
           target={this.state.hoverToken} x={this.state.x} y={this.state.y}/>
