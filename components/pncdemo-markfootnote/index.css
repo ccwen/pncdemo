@@ -1,1 +1,15 @@
 .markfootnote {}
+.extra_footnote { 
+   font-size:60%;
+   background-color:brown;
+   color:white;
+   border-radius: 50%;
+   font-weight: bold;
+}
+.extra_footnote2 { 
+   font-size:60%;
+   background-color:blue;
+   color:white;
+   border-radius: 50%;
+   font-weight: bold;
+}

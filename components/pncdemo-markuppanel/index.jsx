@@ -19,8 +19,11 @@ var markuppanel = React.createClass({
   },
   renderMarkupButtons:function(m,idx) {
     var extra="";
-    var color="btn-primary";
-    if (idx==this.state.selected) extra=" active";
+    var color="btn-default";
+    if (idx==this.state.selected) {
+      extra=" active";
+      color="btn-primary";
+    }
     return <label key={"b"+idx} ref={"b"+idx} className={"btn "+color+extra}>
       <input onChange={this.activateMarkup} type="radio" name="markup"
       checked={idx==this.state.selected} data-n={idx}></input>{m.caption}

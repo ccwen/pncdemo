@@ -5,10 +5,10 @@
 //var othercomponent=Require("other"); 
 var markperson = React.createClass({
   getInitialState: function() {
-     return {};
+     return {immediate:true};
   },
   mixins: [Require("markupdialogmixin")],
-  action:function(opts) {
+  execute:function(opts) {
     this.props.action("applyMarkup",{type:"person",selections:opts.selections});
     this.props.action("clearSelection");
   },

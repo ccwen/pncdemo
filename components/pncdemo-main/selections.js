@@ -1,14 +1,14 @@
 var selections=[];
 var applyMarkup=function(opts) {
 	opts.selections.map(function(s){
-		s[0].applyMarkup(opts.type,s[1]);
+		s[0].action("applyMarkup",opts.type,s[1]);
 	});
 }
 var clear=function(opts){
 	opts=opts||{};
 	selections.map(function(s){
-		s[0].clearRanges();
-		if (!opts.keepWindowSelection) s[0].clearWindowSelection();
+		s[0].action("clearRanges");
+		if (!opts.keepWindowSelection) s[0].action("clearWindowSelection");
 	});
 	selections=[];
 }

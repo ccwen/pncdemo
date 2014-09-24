@@ -9,7 +9,7 @@ var markcorrespond = React.createClass({
       };
   },
   mixins: [Require("markupdialogmixin")],
-  action:function(opts) {
+  execute:function(opts) {
     if (opts.selections.length<2) return;
     this.show();
   },

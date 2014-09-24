@@ -5,13 +5,16 @@
 //var othercomponent=Require("other"); 
 var hovermenu = React.createClass({
   getInitialState: function() {
-    return {bar: "world"};
+    return {editable:this.props.editable};
+  },
+  renderEditButton:function() {//invoke the dialog
+    return <button className="btn btn-xs btn-primary">Change</button>
   },
   render: function() {
     return (
       <div className="hovermenu"> 
-        <button className="btn btn-xs btn-danger">{"\u2716"}</button>   
-        <button className="btn btn-xs btn-primary">dictionary</button>
+        {this.state.editable?renderEditButton():null}
+        <button className="btn btn-xs btn-danger">{"\u2716"}</button>
       </div>
     );
   },

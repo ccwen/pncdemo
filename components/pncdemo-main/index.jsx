@@ -50,9 +50,9 @@ var main = React.createClass({
     return false;
   },
   fireMarkup:function() {
-    var dialog=this.refs.markupdialog;
-    if (!dialog) return;
-    dialog.activate({selections:selections.get()});
+    var M=this.refs.markupdialog;
+    if (!M) return;
+    M.activate({selections:selections.get()});
   },
   updateSelection:function(view,ranges) {
     selections.update(view,ranges);

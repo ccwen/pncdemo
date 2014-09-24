@@ -4,15 +4,30 @@
 
 var markfootnote = React.createClass({
   getInitialState: function() {
-     return {
-        test: 'test'
-      };
+     return { };
   },
   mixins: [Require("markupdialogmixin")],
-
-  renderBody:function() {
-    return <div>foot node</div>
+  allow:function(opts) {
+    return (opts.selections.length==1 &&  //one view
+            opts.selections[0][1].length==1);//one range
   },
+  execute:function() {
+
+  },
+  ok:function() {
+    console.log("OKOK");
+  },
+  cancel:function() {
+    console.log("CANCEL");
+  }, 
+  renderBody:function() {
+    return <div>
+    <textarea ref="footnote" className="form-control"></textarea>
+    </div>   
+  }, 
+  onShow:function() {
+    this.refs.footnote.getDOMNode().focus();
+  }, 
   render: function() {
     return this.renderDialog(this.renderBody);
   }

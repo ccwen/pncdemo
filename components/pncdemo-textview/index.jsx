@@ -5,14 +5,24 @@
   if ctrlKey is pressed, do not fired the default markup behavior
   , instead, append the selection.
 
-  
+  use border-bottom and padding-bottom for multiple underline
+
+  calculate underline level
+     for each token, see how many markup in range.
+
 */
 var tokenize=Require("ksana-document").tokenizers.simple; 
 var getselection=require("./selection");
 
+var footnote1=[5,2,"footnote",{insert:"end",content:"2",note:"footnote footnote"}];
+var footnote2=[5,2,"footnote2",{insert:"end",content:"3",note:"footnote footnote"}];
 var textview = React.createClass({
   getInitialState: function() {
-    return {bar: "world", ranges:[] , markups:[]};
+    this.extraCount=0;
+    return {bar: "world", ranges:[] , markups:[footnote1,footnote2]};
+  },
+  componentWillUpdate:function() {
+    this.extraCount=0;
   },
   addSelection:function(start,len) {
     var ranges=this.state.ranges;
@@ -20,8 +30,18 @@ var textview = React.createClass({
     this.setState({ranges:ranges});
     return ranges;
   },
-  clearWindowSelection:function() {
-    window.getSelection().empty();
+  action:function() {
+    var args = [];
+    Array.prototype.push.apply( args, arguments );
+    var action=args.shift();
+    var opts=args[0];
+    if (action=="clearWindowSelection") {
+      window.getSelection().empty();  
+    } else if (action=="applyMarkup") {
+      this.applyMarkup.apply(this,args);
+    } else if (action=="clearRanges") {
+      this.clearRanges();
+    }
   },
   clearMarkup:function(type,start) {
     /*
@@ -64,7 +84,7 @@ var textview = React.createClass({
   mouseDown:function(e) {
     //if (e.ctrlKey) console.log("ctrl");
   },
-  mouseUp:function(e) {
+  mouseUp:function(e) { 
     var sel=getselection();
     var x=e.pageX,y=e.pageY;
     if (e.ctrlKey && sel && sel.len) {
@@ -80,7 +100,31 @@ var textview = React.createClass({
       }
     }    
   },
+  markupAt:function(n) {
+    return this.state.markups.filter(function(m){
+      var start=m[0],len=m[1];
+      return (n>=start && n<start+len);
+    });
+  },
+  extraElement:function(n) {
+    var out=[];
+    var markups=this.markupAt(n);
+    if (!markups.length) return out;
+    markups.map(function(m){
+      var start=m[0],len=m[1],type=m[2],payload=m[3];
+      if (!payload || !payload.insert) return;
+      if ( (payload.insert=="end" && n==start+len-1)
+      || (payload.insert=="start" && n==start) ){
+        var dataset={className:"extra_"+type,"data-n":n,key:this.extraCount++};
+        out.push(React.DOM.span(dataset,"\u00a0"+payload.content+"\u00a0"));
+      }
+    },this);
+    return out;
+  },
   hasMarkupAt:function(n) {
+    //find the closest markup
+    //for (var i=0;i<)
+    //mark it selected
     return false;
   },
   checkTokenUnderMouse:function(target,x,y) {
@@ -136,8 +180,16 @@ var textview = React.createClass({
       classes+=" "+this.rangeToClasses(this.state.markups,i,"markup_").join(" ");
       classes=classes.trim();
       if (this.isHovering(i)) classes+= " hovering";
-      out.push(<span data-n={i+1} onMouseDown={this.mouseDown}
-        className={classes} key={"k"+i}>{res.tokens[i]}</span>);
+
+      var attributes={
+        onMouseDown:this.mouseDown
+        ,className:classes
+        ,key:"k"+i
+        ,"data-n":i+1
+      };
+      out.push(React.DOM.span(attributes,res.tokens[i]));
+      var extra=this.extraElement(i);
+      if (extra.length) out=out.concat(extra);
     }
     return out;
   },

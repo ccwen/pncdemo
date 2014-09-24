@@ -8,7 +8,7 @@ var markpointer = React.createClass({
      return {};
   },
   mixins: [Require("markupdialogmixin")],
-  action:function(opts) {
+  execute:function(opts) {
     this.props.action("clearSelection",{keepWindowSelection:true});
   },
   render: function() {
