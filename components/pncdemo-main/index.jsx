@@ -74,6 +74,8 @@ var main = React.createClass({
       this.setState({markupdialog:opts.dialog, markupdialogtitle:opts.title});
     } else if (action=="clearSelection") {
       selections.clear(opts);
+    } else if (action=="applyMarkup") {
+      selections.applyMarkup(opts);
     }
   },
   render: function() {

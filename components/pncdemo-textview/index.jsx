@@ -33,7 +33,9 @@ var textview = React.createClass({
     console.log("clear",type,start);
     */
   },
-  
+  applyMarkup:function(type,ranges) {
+    console.log("apply",type,ranges)
+  },
   rangeToClasses:function(arr,i) {
     var out=[];
     arr.map(function(r){

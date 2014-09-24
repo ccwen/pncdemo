@@ -1,4 +1,9 @@
 var selections=[];
+var applyMarkup=function(opts) {
+	opts.selections.map(function(s){
+		s[0].applyMarkup(opts.type,s[1]);
+	});
+}
 var clear=function(opts){
 	opts=opts||{};
 	selections.map(function(s){
@@ -32,4 +37,4 @@ var update=function(view,ranges){
 	}
 	return selections;
 }
-module.exports={clear:clear,update:update,get:get};
+module.exports={clear:clear,update:update,get:get,applyMarkup:applyMarkup};

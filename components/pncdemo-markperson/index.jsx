@@ -9,7 +9,8 @@ var markperson = React.createClass({
   },
   mixins: [Require("markupdialogmixin")],
   action:function(opts) {
-    console.log(opts.selections)
+    this.props.action("applyMarkup",{type:"person",selections:opts.selections});
+    this.props.action("clearSelection");
   },
   render: function() {
     return null;
