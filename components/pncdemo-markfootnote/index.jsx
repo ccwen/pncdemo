@@ -14,12 +14,26 @@ var markfootnote = React.createClass({
   execute:function() {
 
   },
-  ok:function(opts) {
+  loadMarkup:function(markup) {
+    this.editing=markup;
+    this.refs.note.getDOMNode().value=markup[3].note;
+  },
+  packMarkup:function(opts) {
+    opts=opts||{};
     var note=this.refs.note.getDOMNode().value;
     var payload={insert:"end",note:note};
     this.refs.note.getDOMNode().value="";
     var args={selections:opts.selections,type:this.state.type,payload:payload};
+    return args;
+  },
+  create:function(opts) {
+    var args=this.packMarkup(opts);
     this.props.action("applyMarkup",args);
+  },
+  save:function(opts) {
+    var args=this.packMarkup(opts);
+    this.editing[3]=args.payload;
+    this.props.action("markupSaved",args);
   },
   cancel:function(opts) {
     this.props.action("clearSelection");

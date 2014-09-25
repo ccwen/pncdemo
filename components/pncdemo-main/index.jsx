@@ -47,7 +47,7 @@ var main = React.createClass({
       return {caption:baseclass, handler:this.clearMarkup}
     },this); 
   },
-  fireMarkup:function() {
+  createMarkup:function() {
     var M=this.refs.markupdialog;
     if (!M) return;
     M.activate({selections:selections.get()});
@@ -63,7 +63,7 @@ var main = React.createClass({
     var payload=null;
     if (action=="selection" || action=="appendSelection") {
       this.updateSelection(opts.view,opts.ranges);
-      if (action=="selection") this.fireMarkup();
+      if (action=="selection") this.createMarkup();
     } else if (action=="hoverToken") {
       if (this.state.hoverToken!=opts.token &&
           this.state.hoverMarkup!=opts.markup) {
@@ -72,7 +72,7 @@ var main = React.createClass({
       }
     } else if (action=="setMarkupDialog") {
       this.setState({markupdialog:opts.dialog, markuptype:opts.type,markupdialog_title:opts.title,markupeditable:opts.editable});
-      this.setState({hoverToken:null});
+      this.setState({hoverToken:null,hoverMarkup:null});
     } else if (action=="clearSelection") {
       selections.clear(opts);
     } else if (action=="applyMarkup") {
@@ -80,7 +80,13 @@ var main = React.createClass({
       this.action("clearSelection");
     } else if (action=="deleteMarkup") {
       this.state.activeView.action("deleteMarkup",this.state.hoverMarkup);
-      this.setState({hoverToken:null});
+      this.setState({hoverToken:null,hoverMarkup:null});
+    } else if (action=="editMarkup") {
+      this.refs.markupdialog.edit(this.state.hoverMarkup);
+      this.setState({hoverToken:null,hoverMarkup:null});
+    } else if (action=="markupSaved") {
+      this.state.activeView.action("markupSaved");
+      this.setState({hoverToken:null,hoverMarkup:null});
     }
   },
   viewExtra:function() {

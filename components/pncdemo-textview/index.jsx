@@ -7,7 +7,11 @@
   use border-bottom and padding-bottom for multiple underline
   show certain type of markup
 */
+/*
 
+UNDO  , especially for deletion
+
+*/
 var tokenize=Require("ksana-document").tokenizers.simple; 
 var getselection=require("./selection");
 
@@ -49,9 +53,12 @@ var textview = React.createClass({
       window.getSelection().empty();  
     } else if (action=="applyMarkup") {
       this.applyMarkup.apply(this,args);
+    } else if (action=="markupSaved") {
+      this.setState({refresh:true,hoverMarkup:null});
     } else if (action=="clearRanges") {
       this.clearRanges();
     } else if (action=="deleteMarkup") {
+      this.setState({hoverMarkup:null});
       var markups=this.state.markups.filter(function(m){
         return !this.sameMarkup(m,opts);
       },this);
