@@ -14,12 +14,13 @@ var hovermenu = React.createClass({
     this.props.action("deleteMarkup");
   },
   renderEditButton:function() {//invoke the dialog
-    return <button onClick={this.editMarkup} className="btn btn-sm btn-primary">{"\u2026"}</button>
+    return <button onClick={this.editMarkup} className="btn btn-sm btn-primary"><span className="glyphicon glyphicon-pencil"/></button>
   },
+  //{"\u2716"}  remove
   render: function() {
     return ( 
       <div className="hovermenu"> 
-        <button onClick={this.deleteMarkup} className="btn btn-sm btn-danger">{"\u2716"}</button>
+        <button onClick={this.deleteMarkup} className="btn btn-sm btn-danger"><span className="glyphicon glyphicon-remove"/></button>
         {this.props.editable?this.renderEditButton():null}
       </div>
     );
