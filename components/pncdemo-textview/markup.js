@@ -1,17 +1,31 @@
-//calculate markup levels
+//generate per-token markup information, especially smallest possible level
+//level is used for showing multiple underline for tokens
 /*
+  input : markups start and len
+  output:
+     each token has an array of 
+			[markup idx , start_middle_end , level ]
 
-  ntoken 
-  start  1
-  end    2
-  middle 0
+			markup idx is the nth markup in markup array
+			start=1, middle=0, end=2, both=3
 
- 0:  [ [ markupid, start/middle/end , level] , [markupid, level] , [markupid ,level]  ]
- 1:
+ for converting to css style
 
  base on http://codepen.io/anon/pen/fHben by exebook@gmail.com
 */
-//textview convert levels
+
+//infact this can be remove as the main loop is one-pass
+var indexOfSorted = function (array, obj) {  //taken from ksana-document/bsearch.js
+  var low = 0,
+  high = array.length;
+  while (low < high) {
+    var mid = (low + high) >> 1;
+    if (array[mid]==obj) return mid;
+    array[mid] < obj ? low = mid + 1 : high = mid;
+  }
+	if (array[low]==obj) return low;else return -1;
+};
+
 var getTextLen=function(markups) {
 	var textlen=0;
 	markups.map(function(m){
@@ -19,9 +33,70 @@ var getTextLen=function(markups) {
 	});
 	return textlen;
 }
+
 var calculateLevel=function(markups,textlen) {
 	textlen=textlen||getTextLen(markups);
-	return [];
+	var startarr=markups.map(function(m,idx){return [m[0],idx]})
+	              .sort(function(a,b){return a[0]-b[0]});
+
+	var startat =startarr.map(function(m){return m[0]});
+	var startidx=startarr.map(function(m){return m[1]});
+
+	var endarr  =markups.map(function(m,idx){return [m[0]+m[1]-1,idx]})
+	              .sort(function(a,b){return a[0]-b[0]});
+
+	var endat =endarr.map(function(m){return m[0]}); // sort by token offset
+	var endidx=endarr.map(function(m){return m[1]}); //markup index
+	
+	var levels=[],level=0;
+	var out=[];
+	for (var i=0;i<textlen;i++) {
+		var tokenout=[]; 
+		//output for this token, array of [markupidx, middle0/start1/end2 , level]
+		var starts=[],ends=[];
+		var mstart=indexOfSorted(startat,i); //don't need , because one pass
+		while (startat[mstart]==i) {  //find out all markups start at this token
+			starts.push(startidx[mstart]);
+			mstart++;
+		}
+
+		var mend=indexOfSorted(endat,i);
+		while (endat[mend]==i) {  // find out all markups end at this token
+			ends.push(endidx[mend]); //push the idx in markups
+			mend++;
+		}
+
+		//insert new markup
+		starts.map(function(s,idx){
+			var j=0;
+			while (typeof levels[j]!=="undefined") j++;
+			levels[j]=[s,1];
+		});
+		
+		//marked the ended
+		ends.map(function(e,idx){
+			for (var j=0;j<levels.length;j++) {
+				var lv=levels[j];
+				if (!lv) continue;
+				if (lv[0]==e) lv[1]+=2;//mark end
+			}
+		});
+
+		levels.map(function(lv,idx){
+			if (lv) tokenout.push([lv[0],lv[1],idx]);
+		});
+		
+		levels.map(function(lv,idx,L){
+			if (!lv) return;
+			if(lv[1]==1) lv[1]=0;
+			else if (lv[1]>=2) L[idx]=undefined; //remove the ended markup
+		}); //change from start to middle
+
+		out[i]=tokenout;
+	}
+	//levels.length , max level 
+
+	return out;
 }
 
 var API={calculateLevel:calculateLevel};
