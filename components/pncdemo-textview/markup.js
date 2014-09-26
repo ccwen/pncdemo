@@ -15,6 +15,7 @@
 */
 
 //infact this can be remove as the main loop is one-pass
+//fundamental markup process, this should move to ksana-document
 var indexOfSorted = function (array, obj) {  //taken from ksana-document/bsearch.js
   var low = 0,
   high = array.length;
@@ -52,7 +53,6 @@ var calculateLevel=function(markups,textlen) {
 	var out=[];
 	for (var i=0;i<textlen;i++) {
 		var tokenout=[]; 
-		//output for this token, array of [markupidx, middle0/start1/end2 , level]
 		var starts=[],ends=[];
 		var mstart=indexOfSorted(startat,i); //don't need , because one pass
 		while (startat[mstart]==i) {  //find out all markups start at this token
@@ -82,16 +82,13 @@ var calculateLevel=function(markups,textlen) {
 			}
 		});
 
-		levels.map(function(lv,idx){
-			if (lv) tokenout.push([lv[0],lv[1],idx]);
-		});
-		
 		levels.map(function(lv,idx,L){
-			if (!lv) return;
+			if (!lv) return ;
+			tokenout.push([lv[0],lv[1],idx]);
 			if(lv[1]==1) lv[1]=0;
 			else if (lv[1]>=2) L[idx]=undefined; //remove the ended markup
-		}); //change from start to middle
-
+		});
+		
 		out[i]=tokenout;
 	}
 	//levels.length , max level 
