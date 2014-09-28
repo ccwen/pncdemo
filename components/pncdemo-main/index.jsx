@@ -65,10 +65,22 @@ var main = React.createClass({
       this.updateSelection(opts.view,opts.ranges);
       if (action=="selection") this.createMarkup();
     } else if (action=="hoverToken") {
-      if (this.state.hoverToken!=opts.token &&
+      if (this.state.hoverToken!=opts.token ||
           this.state.hoverMarkup!=opts.markup) {
-        this.setState({activeView:opts.view,hoverMarkup:opts.markup,hoverToken:opts.token, x:opts.x, y:opts.y});
-        //if (!this.state.hoverToken) 
+        //do not show hover menu for shadow markup
+        if (opts.markup) {
+          var gid=null;
+          if (opts.markup[3] &&opts.markup[3].gid) gid=opts.markup[3].gid;
+
+          if ((opts.markup[3] && opts.markup[3].shadow)){
+            this.setState({activeView:opts.view,hoverMarkup:opts.markup,hovergid:gid,hoverToken:null}); //set hoverToken to null so that  show hover menu is hidden
+          } else {
+            this.setState({activeView:opts.view, x:opts.x, y:opts.y,
+              hoverMarkup:opts.markup,hoverToken:opts.token,hovergid:gid});
+          }          
+        } else {
+          this.setState({hoverMarkup:null,hoverToken:null,hovergid:null});
+        }
       }
     } else if (action=="setMarkupDialog") {
       this.setState({markupdialog:opts.dialog, markuptype:opts.type,markupdialog_title:opts.title,markupeditable:opts.editable});
@@ -77,6 +89,9 @@ var main = React.createClass({
       selections.clear(opts);
     } else if (action=="applyMarkup") {
       selections.applyMarkup(opts);
+      this.action("clearSelection");
+    } else if (action=="applyLink") {
+      selections.applyLink(opts);
       this.action("clearSelection");
     } else if (action=="deleteMarkup") {
       this.state.activeView.action("deleteMarkup",this.state.hoverMarkup);
@@ -90,7 +105,7 @@ var main = React.createClass({
     }
   },
   viewExtra:function() {
-    return {markuptype:this.state.markuptype};
+    return {markuptype:this.state.markuptype, hovergid:this.state.hovergid};
   },
   render: function() {
     return (

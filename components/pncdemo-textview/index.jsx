@@ -80,7 +80,8 @@ var textview = React.createClass({
   applyMarkup:function(type,ranges,payload) {
     var markups=this.state.markups;
     ranges.map(function(r){
-      markups.push([r[0],r[1],type,payload]);
+      var py=JSON.parse(JSON.stringify(payload));
+      markups.push([r[0],r[1],type,py]);
     })
     this.setState({markups:markups});
   },
@@ -160,7 +161,7 @@ var textview = React.createClass({
     var markups=this.markupAt(n-1,this.props.extra.markuptype); //n-1 is a workaround
     if (markups.length) {
       if (this.state.hoverToken!=target) { //do not refresh if hovering on same token
-        this.props.action("hoverToken",{view:this,token:target,markup:markups[0],x:x,y:y});
+        this.props.action("hoverToken",{view:this,token:target,x:x,y:y,markup:markups[0]});
         this.setState({hoverMarkup:markups[0]});
       }
     } else {
@@ -188,11 +189,25 @@ var textview = React.createClass({
     this.mousetimer=setTimeout( 
       this.checkTokenUnderMouse.bind(this,e.target,e.pageX,e.pageY),100);
   },
+  getName:function() {
+    return this.props.name;
+  },
   isHovering:function(i){
     var M=this.state.hoverMarkup;
-    if (!M) return false;
-    var start=M[0],len=M[1];
-    return (i>=start && i<start+len);
+    var hovering=false;
+    var gid=this.props.extra.hovergid;
+    if (M&&M[3] && M[3].gid) gid=M[3].gid;
+    if (gid){ //find same gid with other view
+      this.state.markups.map(function(m){
+        var start=m[0],len=m[1];
+        hovering=hovering||
+          ((m[3] && m[3].gid==gid) && (i>=start && i<start+len));
+      });
+      return hovering;
+    } else if (M) {
+      var start=M[0],len=M[1];
+      return (i>=start && i<start+len);
+    }
   },
   toXML:function(s) {
     if (!this.tokenized) this.tokenized=tokenize(s);

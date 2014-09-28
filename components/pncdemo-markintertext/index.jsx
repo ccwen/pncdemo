@@ -1,0 +1,53 @@
+/** @jsx React.DOM */
+
+/* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
+
+var markintertext = React.createClass({
+  getInitialState: function() {
+     return { type: this.props.type || "intertext"};
+  },
+  mixins: [Require("markupdialogmixin")],
+  allow:function(opts) {
+    return (opts.selections.length==2);//two view
+  },
+  execute:function() {
+
+  },
+  loadMarkup:function(markup) {
+    this.editing=markup;
+    this.refs.note.getDOMNode().value=markup[3].note;
+  },
+  packMarkup:function(opts) {
+    opts=opts||{};
+    var note=this.refs.note.getDOMNode().value;
+    var payload={insert:"end",note:note};
+    this.refs.note.getDOMNode().value="";
+    var args={selections:opts.selections,type:this.state.type,payload:payload};
+    return args;
+  },
+  create:function(opts) {
+    var args=this.packMarkup(opts);
+    this.props.action("applyMarkup",args);
+  },
+  save:function(opts) {
+    var args=this.packMarkup(opts);
+    this.editing[3]=args.payload;
+    this.props.action("markupSaved",args);
+  },
+  cancel:function(opts) {
+    this.props.action("clearSelection");
+  }, 
+  renderBody:function() {
+    return <div>
+    Linktype:<input ref="linktype" className="input form-control"></input>
+    Description:<textarea ref="desc" className="form-control"></textarea>
+    </div>   
+  }, 
+  onShow:function() {
+    this.refs.linktype.getDOMNode().focus();
+  }, 
+  render: function() {
+    return this.renderDialog(this.renderBody);
+  }
+});
+module.exports=markintertext;

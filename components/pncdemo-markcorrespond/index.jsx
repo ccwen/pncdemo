@@ -4,20 +4,18 @@
 
 var markcorrespond = React.createClass({
   getInitialState: function() {
-     return {
-        test: 'test'
-      };
+     return {immediate:true};
   },
   mixins: [Require("markupdialogmixin")],
-  execute:function(opts) {
-    if (opts.selections.length<2) return;
-    this.show();
+  allow:function(opts) {
+    return (opts.selections.length==2);//one range
   },
-  renderBody:function() {
-    return <div>corresponding link</div>
+  execute:function(opts) {
+    this.props.action("applyLink",{type:"correspond",
+            selections:opts.selections,payload:{}});
   },
   render: function() {
-    return this.renderDialog(this.renderBody);
+    return null;
   }
 });
 module.exports=markcorrespond;

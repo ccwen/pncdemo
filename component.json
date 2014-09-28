@@ -23,7 +23,8 @@
     "pncdemo/markperson": "*",
     "pncdemo/markcorrespond": "*",
     "pncdemo/markfootnote": "*",
-    "pncdemo/markpointer": "*"
+    "pncdemo/markpointer": "*",
+    "pncdemo/markintertext": "*"
   },
   "development": {},
   "paths": [

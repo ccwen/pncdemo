@@ -1,6 +1,6 @@
 {
-  "name": "textview",
-  "repo": "pncdemo/textview",
+  "name": "markintertext",
+  "repo": "pncdemo/markintertext",
   "description": "hello world",
   "version": "0.0.1",
   "keywords": [],
@@ -8,6 +8,6 @@
   "development": {},
   "license": "MIT",
   "main": "index.js",
-  "scripts": ["index.js","selection.js"],
+  "scripts": ["index.js"],
   "styles": ["index.css"]
 }
