@@ -20,9 +20,10 @@ var setGUID=function(opts){ //need guid for multiple range or links
 
 var applyMarkup=function(opts) {
 	setGUID(opts);
-	opts.selections.map(function(s){
-		var view=s[0], ranges=s[1];
-		s[0].action("applyMarkup",opts.type,ranges,opts.payload);
+	opts.selections.map(function(s,idx){
+		var view=s[0], ranges=s[1],py=opts.payload;
+		if (idx>0) py={shadow:true, gid:opts.payload.gid}; //only first selection has payload
+		s[0].action("applyMarkup",opts.type,ranges,py);
 	});
 }
 

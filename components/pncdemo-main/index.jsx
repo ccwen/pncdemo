@@ -32,6 +32,9 @@ var main = React.createClass({
   componentWillUpdate:function() {
     selections.clear();
   },
+  componentDidUpdate:function() {
+    this.deletinggid=null;
+  },
   componentDidMount:function() {
   },
   getMenuPayload:function(opts) {
@@ -95,7 +98,10 @@ var main = React.createClass({
       this.action("clearSelection");
     } else if (action=="deleteMarkup") {
       this.state.activeView.action("deleteMarkup",this.state.hoverMarkup);
-      this.setState({hoverToken:null,hoverMarkup:null});
+      //broad cast the gid to delete all
+      var m=this.state.hoverMarkup;
+      if (m[3] && m[3].gid) this.deletinggid=m[3].gid;
+      this.setState({hoverToken:null,hoverMarkup:null,hovergid:null});
     } else if (action=="editMarkup") {
       this.refs.markupdialog.edit(this.state.hoverMarkup);
       this.setState({hoverToken:null,hoverMarkup:null});
@@ -105,7 +111,7 @@ var main = React.createClass({
     }
   },
   viewExtra:function() {
-    return {markuptype:this.state.markuptype, hovergid:this.state.hovergid};
+    return {markuptype:this.state.markuptype, hovergid:this.state.hovergid,deletinggid:this.deletinggid};
   },
   render: function() {
     return (

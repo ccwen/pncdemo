@@ -23,6 +23,13 @@ var textview = React.createClass({
     this.footNoteCount=0;
   },
   shouldComponentUpdate:function(nextProps,nextState) {
+    if (nextProps.extra.deletinggid) {
+      var newmarkups=this.state.markups.filter(function(m){
+        return !m[3] || nextProps.extra.deletinggid!=m[3].gid;
+      },this);
+      nextState.hoverMarkup=null;
+      this.setMarkups(newmarkups,nextState);
+    };
     var textchanged=(nextProps.text!=this.props.text);
     if (textchanged) this.tokenized=null;
     //return textchanged;
@@ -62,10 +69,14 @@ var textview = React.createClass({
       var markups=this.state.markups.filter(function(m){
         return !this.sameMarkup(m,opts);
       },this);
-      if (markups.length!=this.state.markups.length) {
-        this.setState({markups:markups});
-      }
+      this.setMarkups(markups);
     }
+  },
+  setMarkups:function(newmarkups,nextState) {
+      if (newmarkups.length!=this.state.markups.length) {
+        if (nextState) nextState.markups=newmarkups;
+        else this.setState({markups:newmarkups});
+      }
   },
   clearMarkup:function(type,start) {
     /*
@@ -79,8 +90,13 @@ var textview = React.createClass({
   },
   applyMarkup:function(type,ranges,payload) {
     var markups=this.state.markups;
-    ranges.map(function(r){
-      var py=JSON.parse(JSON.stringify(payload));
+    ranges.map(function(r,idx){
+      if (idx==0) {
+        var py=JSON.parse(JSON.stringify(payload));  
+      } else {
+        var py={shadow:true};
+        if (payload && payload.gid) py.gid=payload.gid;
+      }
       markups.push([r[0],r[1],type,py]);
     })
     this.setState({markups:markups});
