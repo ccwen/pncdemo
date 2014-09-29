@@ -11,17 +11,20 @@ var markintertext = React.createClass({
     return (opts.selections.length==2);//two view
   },
   execute:function() {
-
+ 
   },
   loadMarkup:function(markup) {
     this.editing=markup;
-    this.refs.note.getDOMNode().value=markup[3].note;
+    this.refs.desc.getDOMNode().value=markup[3].desc;
+    this.refs.linktype.getDOMNode().value=markup[3].linktype;
   },
   packMarkup:function(opts) {
     opts=opts||{};
-    var note=this.refs.note.getDOMNode().value;
-    var payload={insert:"end",note:note};
-    this.refs.note.getDOMNode().value="";
+    var desc=this.refs.desc.getDOMNode().value;
+    var linktype=this.refs.linktype.getDOMNode().value;
+    var payload={insert:"end",desc:desc,linktype:linktype};
+    this.refs.linktype.getDOMNode().value="";
+    this.refs.desc.getDOMNode().value="";
     var args={selections:opts.selections,type:this.state.type,payload:payload};
     return args;
   },

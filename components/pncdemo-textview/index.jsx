@@ -158,11 +158,13 @@ var textview = React.createClass({
       if (!payload || !payload.insert) return;
       if ( (payload.insert=="end" && n==start+len-1)
       || (payload.insert=="start" && n==start) ){
-        if (type.substr(0,8)=="footnote") this.footNoteCount++;
-        var content=payload.content||this.footNoteCount;
-        var dataset={className:"extra_"+type,"data-n":n,key:this.extraCount++};
+        if (type.substr(0,8)=="footnote") {
+          this.footNoteCount++;
+          var content=payload.content||this.footNoteCount;
+          var dataset={className:"extra_"+type,"data-n":n,key:this.extraCount++};
         //force 1em space
-        out.push(React.DOM.span(dataset,"\u00a0"+content+"\u00a0"));
+          out.push(React.DOM.span(dataset,"\u00a0"+content+"\u00a0"));
+        }
       }
     },this);
     return out;
