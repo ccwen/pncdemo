@@ -38,12 +38,15 @@ var main = React.createClass({
   componentDidUpdate:function() {
     this.deletinggid=null;
   },
-  componentDidMount:function() {
+  loadMarkups:function() {
     var keys=[];
     testdata.map(function(t){t.map(function(m){keys.push(m.name)})});
     persistent.loadMarkups(keys,function(bulk){
       this.setState({markupready:true,bulk:bulk});
     },this);
+  },
+  componentDidMount:function() {
+    this.loadMarkups();
   },
   viewExtra:function(name) {
     var match=this.state.bulk.filter(function(m){
@@ -127,7 +130,8 @@ var main = React.createClass({
     } else if (action=="saveMarkups") {
       persistent.saveMarkups(this.state.bulk);
     } else if (action=="resetMarkups") {
-      persistent.resetMarkups();
+      persistent.resetMarkups(this.state.bulk);
+      this.forceUpdate();
     }
   },
 

@@ -9,14 +9,16 @@ var loadMarkups=function(keys,cb,context){
     	} else {
     		bulk.push({_id:d.id,_rev:d.doc._rev,markups:d.doc.markups||[]});	
     	}
-      
     });
     cb.apply(context,[bulk]);
   });	
 }
 
-var resetMarkups=function() {
+var resetMarkups=function(bulk) {
 	db.destroy("pncdemo");
+	bulk.map(function(b){
+		b.markups=[];
+	});
 }
 
 var saveMarkups=function(markups,cb,context) {
