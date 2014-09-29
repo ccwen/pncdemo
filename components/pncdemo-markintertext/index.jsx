@@ -15,16 +15,16 @@ var markintertext = React.createClass({
   },
   loadMarkup:function(markup) {
     this.editing=markup;
-    this.refs.desc.getDOMNode().value=markup[3].desc;
+    this.refs.content.getDOMNode().value=markup[3].desc;
     this.refs.linktype.getDOMNode().value=markup[3].linktype;
   },
   packMarkup:function(opts) {
     opts=opts||{};
-    var desc=this.refs.desc.getDOMNode().value;
+    var content=this.refs.content.getDOMNode().value;
     var linktype=this.refs.linktype.getDOMNode().value;
-    var payload={insert:"end",desc:desc,linktype:linktype};
+    var payload={insert:"end",content:content,linktype:linktype};
     this.refs.linktype.getDOMNode().value="";
-    this.refs.desc.getDOMNode().value="";
+    this.refs.content.getDOMNode().value="";
     var args={selections:opts.selections,type:this.state.type,payload:payload};
     return args;
   },
@@ -43,7 +43,7 @@ var markintertext = React.createClass({
   renderBody:function() {
     return <div>
     Linktype:<input ref="linktype" className="input form-control"></input>
-    Description:<textarea ref="desc" className="form-control"></textarea>
+    Description:<textarea ref="content" className="form-control"></textarea>
     </div>   
   }, 
   onShow:function() {

@@ -128,6 +128,7 @@ var textview = React.createClass({
     //this.clearWindowSelection();
   },
   mouseUp:function(e) { 
+    if (this.props.extra.readonly) return;
     var sel=getselection();
     var x=e.pageX,y=e.pageY;
     if (e.ctrlKey && sel && sel.len) {
@@ -161,11 +162,11 @@ var textview = React.createClass({
       || (payload.insert=="start" && n==start) ){
         if (type.substr(0,8)=="footnote") {
           this.footNoteCount++;
-          var content=payload.content||this.footNoteCount;
+          var seq=payload.seq||this.footNoteCount;
           //var dataset={className:"extra_"+type,"data-n":n,key:this.extraCount++};
-          //out.push(React.DOM.span(dataset,"\u00a0"+content+"\u00a0"));
+          //out.push(React.DOM.span(dataset,"\u00a0"+seq+"\u00a0"));
           //force 1em space
-          out='<span class="extra_"'+type+' data-n"='+n+'">\u00a0'+content+'\u00a0</span>';
+          out='<span class="extra_'+type+'" data-n"='+n+'">\u00a0'+seq+'\u00a0</span>';
         }
       }
     },this);
@@ -245,7 +246,7 @@ var textview = React.createClass({
     for (var i=tokens.length-1;i>0;i--) {
       var classes="";
       if (tokens[i]=="\n") {
-        out='<br key="k'+i+'"/>'+out;
+        out='<br/>'+out;
         continue;
       }
       
@@ -261,7 +262,7 @@ var textview = React.createClass({
       if (this.isHovering(i)) classes= " hovering";//highest priority
 
       out='<span class="'+classes+'" data-n="'+(i+1)+'">'+tokens[i]+'</span>'+out;
-      out=this.extraElement(i)+out;
+      out=this.extraElement(i-1)+out;
     }
     return out;
   },

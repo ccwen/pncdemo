@@ -16,11 +16,22 @@ var hovermenu = React.createClass({
   renderEditButton:function() {//invoke the dialog
     return <button onClick={this.editMarkup} className="btn btn-sm btn-primary"><span className="glyphicon glyphicon-pencil"/></button>
   },
+  renderDeleteButton:function() {
+    return <button onClick={this.deleteMarkup} className="btn btn-sm btn-danger"><span className="glyphicon glyphicon-remove"/></button>;
+  },
+  renderContent:function() {
+    var content="";
+    if (this.props.markup && this.props.markup[2]) {
+      content=this.props.markup[3].content;
+    }
+    return <div>{content}</div>
+  },
   //{"\u2716"}  remove
   render: function() {
     return ( 
       <div className="hovermenu"> 
-        <button onClick={this.deleteMarkup} className="btn btn-sm btn-danger"><span className="glyphicon glyphicon-remove"/></button>
+        {this.props.readonly?this.renderContent():null}
+        {!this.props.readonly?this.renderDeleteButton():null}
         {this.props.editable?this.renderEditButton():null}
       </div>
     );

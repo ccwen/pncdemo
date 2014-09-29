@@ -54,7 +54,8 @@ var main = React.createClass({
     });
     var markups=[];
     if (match.length) markups=match[0].markups;
-    return {markuptype:this.state.markuptype, hovergid:this.state.hovergid,deletinggid:this.deletinggid, markups: markups };
+    var readonly=!this.state.markuptype;
+    return {markuptype:this.state.markuptype, hovergid:this.state.hovergid,deletinggid:this.deletinggid, markups: markups , readonly:readonly};
   },
   getMenuPayload:function(opts) {
     return {
@@ -144,6 +145,7 @@ var main = React.createClass({
         {this.state.markupdialog?this.state.markupdialog({ref:"markupdialog",action:this.action,type:this.state.markuptype,title:this.state.markupdialog_title}):null}
         <div>
         <hoverMenu action={this.action} 
+          readonly={!this.state.markuptype}
           markup={this.state.hoverMarkup} target={this.state.hoverToken} 
           editable={this.state.markupeditable} x={this.state.x} y={this.state.y}/>
         <div className="col-md-3">
