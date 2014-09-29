@@ -15,7 +15,7 @@ var markintertext = React.createClass({
   },
   loadMarkup:function(markup) {
     this.editing=markup;
-    this.refs.content.getDOMNode().value=markup[3].desc;
+    this.refs.content.getDOMNode().value=markup[3].content;
     this.refs.linktype.getDOMNode().value=markup[3].linktype;
   },
   packMarkup:function(opts) {
