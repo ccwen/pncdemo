@@ -13,6 +13,7 @@ UNDO  , especially for deletion
 
 */
 var tokenize=Require("ksana-document").tokenizers.simple; 
+var underlines=Require("ksana-document").underlines; 
 var getselection=require("./selection");
 
 var textview = React.createClass({
@@ -102,7 +103,7 @@ var textview = React.createClass({
       }
       markups.push([r[0],r[1],type,py]);
     })
-    this.setState({markups:markups});
+    this.forceUpdate();
   },
   rangeToClasses:function(arr,i,prefix) {
     var out=[];
@@ -126,9 +127,6 @@ var textview = React.createClass({
     }
     //this.clearWindowSelection();
   },
-  mouseDown:function(e) {
-    //if (e.ctrlKey) console.log("ctrl");
-  },
   mouseUp:function(e) { 
     var sel=getselection();
     var x=e.pageX,y=e.pageY;
@@ -136,7 +134,7 @@ var textview = React.createClass({
       var ranges=this.addSelection(sel.start,sel.len);
       this.props.action("appendSelection",{ranges:ranges,x:x,y:y,view:this});
     } else {
-      if (sel.len) {
+      if (sel && sel.len) {
         var ranges=this.addSelection(sel.start,sel.len);
         this.props.action("selection",{ranges:ranges, x:x,y:y, view:this});        
       } else {
@@ -153,7 +151,7 @@ var textview = React.createClass({
     });
   },
   extraElement:function(n) {
-    var out=[];
+    var out="";
     var markups=this.markupAt(n,this.props.extra.markuptype);
     if (!markups.length) return out;
     markups.map(function(m){
@@ -164,9 +162,10 @@ var textview = React.createClass({
         if (type.substr(0,8)=="footnote") {
           this.footNoteCount++;
           var content=payload.content||this.footNoteCount;
-          var dataset={className:"extra_"+type,"data-n":n,key:this.extraCount++};
-        //force 1em space
-          out.push(React.DOM.span(dataset,"\u00a0"+content+"\u00a0"));
+          //var dataset={className:"extra_"+type,"data-n":n,key:this.extraCount++};
+          //out.push(React.DOM.span(dataset,"\u00a0"+content+"\u00a0"));
+          //force 1em space
+          out='<span class="extra_"'+type+' data-n"='+n+'">\u00a0'+content+'\u00a0</span>';
         }
       }
     },this);
@@ -209,10 +208,10 @@ var textview = React.createClass({
     clearTimeout(this.mousetimer);
     this.mousetimer=setTimeout( 
       this.checkTokenUnderMouse.bind(this,e.target,e.pageX,e.pageY),100);
-  },
+  }, 
   getName:function() {
     return this.props.name;
-  },
+  }, 
   isHovering:function(i){
     var M=this.state.hoverMarkup;
     var hovering=false;
@@ -230,28 +229,39 @@ var textview = React.createClass({
       return (i>=start && i<start+len);
     }
   },
+  getOnScreenMarkups:function(){
+    var markups=this.props.extra.markups;
+    var markuptype=this.props.extra.markuptype;
+    if (markuptype) return markups.filter(function(m){return m[2]==markuptype;});
+    else return markups;
+  },
   toXML:function(s) {
     if (!this.tokenized) this.tokenized=tokenize(s);
-    var out=[],tokens=this.tokenized.tokens;
-    for (var i=0;i<tokens.length;i++) {
+    var out="",tokens=this.tokenized.tokens;
+    var markups=this.getOnScreenMarkups();
+    var M=underlines.levelMarkups(markups);
+    var mid=0; //markup id
+    
+    for (var i=tokens.length-1;i>0;i--) {
+      var classes="";
       if (tokens[i]=="\n") {
-        out.push(<br key={"k"+i}/>);
+        out='<br key="k'+i+'"/>'+out;
         continue;
-      } 
-      var classes=this.rangeToClasses(this.state.ranges,i).join(" ");
-      classes+=" "+this.rangeToClasses(this.props.extra.markups,i,"markup_").join(" ");
-      classes=classes.trim();
+      }
+      
+      while (mid<M.length && M[mid][1]==i+1) {
+        var id=M[mid][0], pos =M[mid][1] ,tagtype=M[mid][2], level=M[mid][3];
+        var tag=markups[id][2];
+        if (tagtype==underlines.TAG_START) out='<span class="markup_'+tag+' lv'+level+'">'+out;
+        if (tagtype==underlines.TAG_END) out= '</span>' +out;
+        mid++;
+      }
+
+      if (this.state.ranges.length) classes=this.rangeToClasses(this.state.ranges,i).join(" ");
       if (this.isHovering(i)) classes= " hovering";//highest priority
 
-      var attributes={
-        onMouseDown:this.mouseDown
-        ,className:classes
-        ,key:"k"+i
-        ,"data-n":i+1
-      };
-      out.push(React.DOM.span(attributes,tokens[i]));
-      var extra=this.extraElement(i);
-      if (extra.length) out=out.concat(extra);
+      out='<span class="'+classes+'" data-n="'+(i+1)+'">'+tokens[i]+'</span>'+out;
+      out=this.extraElement(i)+out;
     }
     return out;
   },
@@ -261,7 +271,7 @@ var textview = React.createClass({
         <div className="textview" 
           onMouseUp={this.mouseUp}
           onMouseOut={this.mouseOut}
-          onMouseMove={this.mouseMove}>{this.toXML(this.props.text)}
+          onMouseMove={this.mouseMove} dangerouslySetInnerHTML={{__html:this.toXML(this.props.text)}}>
         </div>
       </div>
     );

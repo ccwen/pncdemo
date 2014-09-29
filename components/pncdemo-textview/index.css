@@ -1,2 +1,8 @@
-.textview {}
-.hovering {background-color:yellow;border-radius: 25%}
+.textview {line-height:150%;}
+.hovering {background-color:yellow;border-radius: 0.25em}
+.lv0{padding-bottom: 0px;}
+.lv1{padding-bottom: 2px;}
+.lv2{padding-bottom: 4px;}
+.lv3{padding-bottom: 6px;}
+.lv4{padding-bottom: 8px;}
+.lv5{padding-bottom: 10px;}
