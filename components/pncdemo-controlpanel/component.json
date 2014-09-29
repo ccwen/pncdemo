@@ -1,6 +1,6 @@
 {
-  "name": "main",
-  "repo": "pncdemo/main",
+  "name": "controlpanel",
+  "repo": "pncdemo/controlpanel",
   "description": "hello world",
   "version": "0.0.1",
   "keywords": [],
@@ -8,6 +8,6 @@
   "development": {},
   "license": "MIT",
   "main": "index.js",
-  "scripts": ["index.js","testdata.js","selections.js","persistent.js"],
+  "scripts": ["index.js"],
   "styles": ["index.css"]
 }

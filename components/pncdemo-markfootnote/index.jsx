@@ -4,7 +4,7 @@
 
 var markfootnote = React.createClass({
   getInitialState: function() {
-     return { type: this.props.type || "footnote"};
+     return { };
   },
   mixins: [Require("markupdialogmixin")],
   allow:function(opts) {
@@ -23,7 +23,7 @@ var markfootnote = React.createClass({
     var note=this.refs.note.getDOMNode().value;
     var payload={insert:"end",note:note};
     this.refs.note.getDOMNode().value="";
-    var args={selections:opts.selections,type:this.state.type,payload:payload};
+    var args={selections:opts.selections,type:this.props.type,payload:payload};
     return args;
   },
   create:function(opts) {

@@ -5,10 +5,13 @@ Require("bootstrap");
 var contextmenu=Require("contextmenu");
 var stackview=Require("stackview"); 
 var textview=Require("textview");
+var controlpanel=Require("controlpanel");
 var markuppanel=Require("markuppanel");
 var hoverMenu=Require("hovermenu");
 var testdata=require('./testdata');
 var selections=require("./selections");
+var persistent=require("./persistent");
+
 var main = React.createClass({
   selection_menuitems:function() {
     return [
@@ -36,6 +39,19 @@ var main = React.createClass({
     this.deletinggid=null;
   },
   componentDidMount:function() {
+    var keys=[];
+    testdata.map(function(t){t.map(function(m){keys.push(m.name)})});
+    persistent.loadMarkups(keys,function(bulk){
+      this.setState({markupready:true,bulk:bulk});
+    },this);
+  },
+  viewExtra:function(name) {
+    var match=this.state.bulk.filter(function(m){
+      return (m._id==name);
+    });
+    var markups=[];
+    if (match.length) markups=match[0].markups;
+    return {markuptype:this.state.markuptype, hovergid:this.state.hovergid,deletinggid:this.deletinggid, markups: markups };
   },
   getMenuPayload:function(opts) {
     return {
@@ -108,25 +124,29 @@ var main = React.createClass({
     } else if (action=="markupSaved") {
       this.state.activeView.action("markupSaved");
       this.setState({hoverToken:null,hoverMarkup:null});
+    } else if (action=="saveMarkups") {
+      persistent.saveMarkups(this.state.bulk);
+    } else if (action=="resetMarkups") {
+      persistent.resetMarkups();
     }
   },
-  viewExtra:function() {
-    return {markuptype:this.state.markuptype, hovergid:this.state.hovergid,deletinggid:this.deletinggid};
-  },
+
   render: function() {
+    if (!this.state.markupready) return <div>loading</div>;
     return (
       <div id="main">
+        <controlpanel action={this.action}/>
         <markuppanel action={this.action}/>
-        {this.state.markupdialog?this.state.markupdialog({ref:"markupdialog",action:this.action,type:this.state.markup_type,title:this.state.markupdialog_title}):null}
+        {this.state.markupdialog?this.state.markupdialog({ref:"markupdialog",action:this.action,type:this.state.markuptype,title:this.state.markupdialog_title}):null}
         <div>
         <hoverMenu action={this.action} 
           markup={this.state.hoverMarkup} target={this.state.hoverToken} 
           editable={this.state.markupeditable} x={this.state.x} y={this.state.y}/>
         <div className="col-md-3">
-          <stackview view={textview} action={this.action} views={this.state.views[0]}extra={this.viewExtra()}  />
+          <stackview view={textview} action={this.action} views={this.state.views[0]}extra={this.viewExtra}  />
         </div>
         <div className="col-md-9">
-          <stackview view={textview} action={this.action} views={this.state.views[1]} extra={this.viewExtra()} />
+          <stackview view={textview} action={this.action} views={this.state.views[1]} extra={this.viewExtra} />
         </div>
         </div>
       </div>

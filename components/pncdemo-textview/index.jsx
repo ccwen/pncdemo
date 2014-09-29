@@ -15,8 +15,6 @@ UNDO  , especially for deletion
 var tokenize=Require("ksana-document").tokenizers.simple; 
 var getselection=require("./selection");
 
-var footnote1=[5,2,"footnote",{insert:"end",content:"2",note:"footnote footnote"}];
-var footnote2=[5,2,"footnote2",{insert:"end",note:"footnote footnote"}];
 var textview = React.createClass({
   resetCount:function() {
     this.extraCount=0;
@@ -24,11 +22,11 @@ var textview = React.createClass({
   },
   shouldComponentUpdate:function(nextProps,nextState) {
     if (nextProps.extra.deletinggid) {
-      var newmarkups=this.state.markups.filter(function(m){
+      var newmarkups=this.props.extra.markups.filter(function(m){
         return !m[3] || nextProps.extra.deletinggid!=m[3].gid;
       },this);
       nextState.hoverMarkup=null;
-      this.setMarkups(newmarkups,nextState);
+      this.setMarkups(newmarkups);
     };
     var textchanged=(nextProps.text!=this.props.text);
     if (textchanged) this.tokenized=null;
@@ -37,7 +35,7 @@ var textview = React.createClass({
   },
   getInitialState: function() {
     this.resetCount();
-    return {ranges:[] , markups:[]};
+    return {ranges:[] };
   },
   componentWillUpdate:function() {
     this.resetCount();
@@ -66,17 +64,19 @@ var textview = React.createClass({
       this.clearRanges();
     } else if (action=="deleteMarkup") {
       this.setState({hoverMarkup:null});
-      var markups=this.state.markups.filter(function(m){
+      var markups=this.props.extra.markups.filter(function(m){
         return !this.sameMarkup(m,opts);
       },this);
       this.setMarkups(markups);
     }
   },
-  setMarkups:function(newmarkups,nextState) {
-      if (newmarkups.length!=this.state.markups.length) {
-        if (nextState) nextState.markups=newmarkups;
-        else this.setState({markups:newmarkups});
-      }
+  setMarkups:function(newmarkups) {
+    var markups=this.props.extra.markups;
+    markups.splice(0,markups.length);
+
+    newmarkups.map(function(m){
+      markups.push(m);
+    });
   },
   clearMarkup:function(type,start) {
     /*
@@ -89,13 +89,16 @@ var textview = React.createClass({
     */
   },
   applyMarkup:function(type,ranges,payload) {
-    var markups=this.state.markups;
+    var markups=this.props.extra.markups;
     ranges.map(function(r,idx){
-      if (idx==0) {
+      if (idx==0 && payload) {
         var py=JSON.parse(JSON.stringify(payload));  
       } else {
-        var py={shadow:true};
-        if (payload && payload.gid) py.gid=payload.gid;
+        var py=null;
+        if (payload && payload.gid) {
+          py={shadow:true}
+          py.gid=payload.gid;
+        }
       }
       markups.push([r[0],r[1],type,py]);
     })
@@ -143,7 +146,7 @@ var textview = React.createClass({
     }    
   },
   markupAt:function(n,type) {
-    return this.state.markups.filter(function(m){
+    return this.props.extra.markups.filter(function(m){
       var start=m[0],len=m[1];
       var typemissmatch=(type && m[2]!=type );
       return (n>=start && n<start+len && !typemissmatch);
@@ -216,7 +219,7 @@ var textview = React.createClass({
     var gid=this.props.extra.hovergid;
     if (M&&M[3] && M[3].gid) gid=M[3].gid;
     if (gid){ //find same gid with other view
-      this.state.markups.map(function(m){
+      this.props.extra.markups.map(function(m){
         var start=m[0],len=m[1];
         hovering=hovering||
           ((m[3] && m[3].gid==gid) && (i>=start && i<start+len));
@@ -236,7 +239,7 @@ var textview = React.createClass({
         continue;
       } 
       var classes=this.rangeToClasses(this.state.ranges,i).join(" ");
-      classes+=" "+this.rangeToClasses(this.state.markups,i,"markup_").join(" ");
+      classes+=" "+this.rangeToClasses(this.props.extra.markups,i,"markup_").join(" ");
       classes=classes.trim();
       if (this.isHovering(i)) classes= " hovering";//highest priority
 

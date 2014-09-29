@@ -2,9 +2,10 @@
 
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
 var markups=[
-   {caption:"Pointer",type:null,dialog: Require("markpointer")} //nothing happen
+   {caption:"Overview",type:null,dialog: Require("markpointer")} //nothing happen
   ,{caption:"Person", type:"person", dialog: Require("markperson")  } //immediate single view markup
   ,{caption:"Footnote", type:"footnote",dialog:Require("markfootnote"),editable:true}  //single view dialog markup
+  ,{caption:"Footnote2", type:"footnote2",dialog:Require("markfootnote"),editable:true}  //single view dialog markup
   ,{caption:"Correspondance",type:"correspond",dialog:Require("markcorrespond")} //dual view markup
   ,{caption:"intertext",type:"intertext",dialog:Require("markintertext")} //dual view dialog markup
 ];
