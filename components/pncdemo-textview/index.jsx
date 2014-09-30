@@ -245,6 +245,7 @@ var textview = React.createClass({
     
     for (var i=tokens.length-1;i>0;i--) {
       var classes="";
+      
       if (tokens[i]=="\n") {
         out='<br/>'+out;
         continue;
@@ -264,7 +265,7 @@ var textview = React.createClass({
       out='<span class="'+classes+'" data-n="'+(i+1)+'">'+tokens[i]+'</span>'+out;
       out=this.extraElement(i-1)+out;
     }
-    return out;
+    return out.replace(/\n/g,"<br/>");
   },
   render: function() {
     return (
