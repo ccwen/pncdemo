@@ -4,7 +4,7 @@
 .selected   {
 	background-color:Highlight;
 	border-width:1px;border-top-style:dotted;border-bottom-style:dotted;
-  -webkit-animation: myselection 1s infinite;
+ # -webkit-animation: myselection 1s infinite;
 }
 .selected_e {border-width:1px;border-right-style:dotted;border-top-right-radius:0.4em;border-bottom-right-radius:0.4em;}
 

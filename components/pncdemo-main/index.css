@@ -1,2 +1,5 @@
-.main {}
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none; /* Disable selection/copy in UIWebView */
+}
 .views {overflow:auto;height:90%;}

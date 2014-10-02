@@ -129,15 +129,23 @@ var textview = React.createClass({
   },
   mouseUp:function(e) { 
     if (this.props.extra.readonly) return;
-    var sel=getselection();
-    var x=e.pageX,y=e.pageY;
-    if (e.ctrlKey && sel && sel.len) {
+    if (this.touchstartn>-1) {
+      sel={start:this.touchstartn, len:this.touchendn-this.touchstartn+1};
+      if (sel.len>10) {
+        this.clearSelected();
+        return;
+      }
+    } else {
+      var sel=getselection();  
+    }
+    if (e && e.ctrlKey && sel && sel.len) {
+      //var x=e.pageX,y=e.pageY;
       var ranges=this.addSelection(sel.start,sel.len);
-      this.props.action("appendSelection",{ranges:ranges,x:x,y:y,view:this});
+      this.props.action("appendSelection",{ranges:ranges,view:this});
     } else {
       if (sel && sel.len) {
         var ranges=this.addSelection(sel.start,sel.len);
-        this.props.action("selection",{ranges:ranges, x:x,y:y, view:this});        
+        this.props.action("selection",{ranges:ranges, view:this});
       } else {
         this.props.action("selection",{ranges:null,view:this});
         this.clearRanges();
@@ -267,10 +275,81 @@ var textview = React.createClass({
     }
     return out.replace(/\n/g,"<br/>");
   },
+  onClick:function(e) {
+    e.preventDefault();
+    alert(e.target.dataset['n'])
+  },
+  clearSelected:function() {
+    $(this.getDOMNode()).find(".selected").removeClass("selected")
+    .removeClass("selected_e").removeClass("selected_b");
+  },
+  touchStart:function(e){
+    if (e.target.dataset.n) {
+      this.touchstartn=e.target.dataset.n;
+      this.touchstartx=e.changedTouches[0].pageX;
+      this.touchstarty=e.changedTouches[0].pageY;
+      this.touchstartelement=e.target;
+      this.range=document.createRange();     
+    } else {
+      this.clearSelected();
+      this.touchstartn=-1;
+      this.range=null;
+    }
+  },
+  markSelection:function() {
+    var from=this.touchstartn;
+    var to=this.touchendn;
+    this.clearSelected();
+    for (var i=from;i<=to;i++) {
+      var node=$("span[data-n='"+i+"']")[0];
+      if (i==from) node.classList.add("selected_b");
+      if (i==to) node.classList.add("selected_e");
+      node.classList.add("selected");
+    }
+  },
+  touchMove:function(e){
+    if (!this.touchstartn==-1) return;
+    var T=e.changedTouches[0];
+    var rect=e.target.getBoundingClientRect();
+    var stopElement=this.findElement(T.pageX,T.pageY);//T.pageX-rect.left, T.pageY-rect.top);
+    if (stopElement && stopElement.dataset.n) {
+      this.touchendelement=stopElement;
+      this.touchendn=stopElement.dataset.n;
+
+      this.markSelection();
+      //this.range.setStart(this.touchstartelement.firstChild,0);
+      //this.range.setEnd(stopElement.firstChild, 1);
+    }
+  },
+  getOffset:function (object, offset) {
+      if (!object) return;
+      offset.x += object.offsetLeft;
+      offset.y += object.offsetTop;
+
+      this.getOffset (object.offsetParent, offset);
+  },
+  findElement:function(x,y) {
+    var stopElement=this.touchstartelement;
+    while (stopElement) {
+      var off={x:0,y:0};
+      var h=stopElement.offsetHeight, w=stopElement.offsetWidth;
+      this.getOffset(stopElement,off);
+      if (x>off.x &&x<off.x+w && y>off.y&&y<off.y+h) break;
+      stopElement=stopElement.nextSibling;
+    }
+    return stopElement;
+  },
+  touchEnd:function(e){
+    //console.log(this.touchstartelement,this.touchendelement);
+    this.mouseUp(e);
+  },
   render: function() {
     return (
       <div>
         <div className="textview" 
+          onTouchStart={this.touchStart}
+          onTouchMove={this.touchMove}
+          onTouchEnd={this.touchEnd}
           onMouseUp={this.mouseUp}
           onMouseOut={this.mouseOut}
           onMouseMove={this.mouseMove} dangerouslySetInnerHTML={{__html:this.toXML(this.props.text)}}>

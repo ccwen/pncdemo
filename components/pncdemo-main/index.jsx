@@ -10,7 +10,21 @@ var markuppanel=Require("markuppanel");
 var hoverMenu=Require("hovermenu");
 var selections=require("./selections");
 var persistent=require("./persistent");
-
+function detectmob() { 
+ if( navigator.userAgent.match(/Android/i)
+ || navigator.userAgent.match(/webOS/i)
+ || navigator.userAgent.match(/iPhone/i)
+ || navigator.userAgent.match(/iPad/i)
+ || navigator.userAgent.match(/iPod/i)
+ || navigator.userAgent.match(/BlackBerry/i)
+ || navigator.userAgent.match(/Windows Phone/i)
+ ){
+    return true;
+  }
+ else {
+    return false;
+  }
+}
 var main = React.createClass({
   selection_menuitems:function() {
     return [
@@ -18,6 +32,7 @@ var main = React.createClass({
     ]
   },
   getInitialState: function() {
+    React.initializeTouchEvents(true);
     return {
      // menuitems:this.selection_menuitems(),
       menupayload:{}
@@ -44,7 +59,9 @@ var main = React.createClass({
     },this);
   },
   componentDidMount:function() {
-    
+    if (detectmob()) {
+      this.getDOMNode().classList.add("noselect");
+    }
   },
   viewExtra:function(name) {
     var match=[];
@@ -149,13 +166,13 @@ var main = React.createClass({
     if (this.state.views) {
       right=this.state.views[1];
       rightcol=right[0].cols||rightcol;
-    }
+    } 
     return (
       <div id="main"> 
         <controlpanel action={this.action}/>
         <markuppanel action={this.action}/>
         {this.state.markupdialog?this.state.markupdialog({ref:"markupdialog",action:this.action,type:this.state.markuptype,title:this.state.markupdialog_title}):null}
-        <div> 
+        <div>
         <hoverMenu action={this.action} 
           readonly={!this.state.markuptype}
           markup={this.state.hoverMarkup} target={this.state.hoverToken} 
