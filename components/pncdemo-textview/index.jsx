@@ -301,7 +301,7 @@ var textview = React.createClass({
     var to=this.touchendn;
     this.clearSelected();
     for (var i=from;i<=to;i++) {
-      var node=$("span[data-n='"+i+"']")[0];
+      var node=$(this.getDOMNode()).find("span[data-n='"+i+"']")[0];
       if (i==from) node.classList.add("selected_b");
       if (i==to) node.classList.add("selected_e");
       node.classList.add("selected");
