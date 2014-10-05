@@ -1,3 +1,13 @@
 .markperson {}
 .markup_person {border-bottom:solid 2px brown;}
 .markup_place {border-bottom:solid 2px green;}
+
+
+.markup_what {border-bottom:dashed 2px blue;}
+.markup_where {border-bottom:solid 2px green;}
+.markup_when {border-bottom:dotted 2px red;}
+.markup_who {border-bottom:solid 2px pink;}
+.markup_how {border-bottom:dotted 2px brown;}
+.markup_why {border-bottom:solid 2px gray;}
+
+.markup_important {border-bottom:solid 2px red;}

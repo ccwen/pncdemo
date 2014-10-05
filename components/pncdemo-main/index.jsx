@@ -3,7 +3,7 @@
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
 Require("bootstrap");
 var contextmenu=Require("contextmenu");
-var stackview=Require("stackview"); 
+var viewer=Require("viewer"); 
 var textview=Require("textview");
 var controlpanel=Require("controlpanel");
 var markuppanel=Require("markuppanel");
@@ -61,7 +61,11 @@ var main = React.createClass({
   componentDidMount:function() {
     if (detectmob()) {
       this.getDOMNode().classList.add("noselect");
+      this.getDOMNode().classList.add("mobile");  
+    } else {
+      this.getDOMNode().classList.add("desktop");
     }
+
   },
   viewExtra:function(name) {
     var match=[];
@@ -179,10 +183,10 @@ var main = React.createClass({
           editable={this.state.markupeditable} x={this.state.x} y={this.state.y}/> 
         <div className="views">
         <div className={"col-md-"+leftcol}>
-          <stackview view={textview} action={this.action} views={left} extra={this.viewExtra}  />
+          <viewer view={textview} action={this.action} views={left} extra={this.viewExtra}  />
         </div>
         <div className={"col-md-"+rightcol}>
-          <stackview view={textview} action={this.action} views={right} extra={this.viewExtra} />
+          <viewer view={textview} action={this.action} views={right} extra={this.viewExtra} />
         </div>
         </div>
         </div>

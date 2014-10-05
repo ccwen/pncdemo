@@ -1,6 +1,6 @@
 {
-  "name": "markuppanel",
-  "repo": "pncdemo/markuppanel",
+  "name": "viewer",
+  "repo": "pncdemo/viewer",
   "description": "hello world",
   "version": "0.0.1",
   "keywords": [],
@@ -8,6 +8,6 @@
   "development": {},
   "license": "MIT",
   "main": "index.js",
-  "scripts": ["index.js","tagset_default.js","tagset_news.js"],
+  "scripts": ["index.js"],
   "styles": ["index.css"]
 }

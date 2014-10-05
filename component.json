@@ -25,7 +25,8 @@
     "pncdemo/markfootnote": "*",
     "pncdemo/markoverview": "*",
     "pncdemo/markintertext": "*",
-    "pncdemo/controlpanel": "*"
+    "pncdemo/controlpanel": "*",
+    "pncdemo/viewer": "*"
   },
   "development": {},
   "paths": [

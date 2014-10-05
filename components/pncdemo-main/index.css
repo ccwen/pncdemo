@@ -2,4 +2,6 @@
     -webkit-touch-callout: none;
     -webkit-user-select: none; /* Disable selection/copy in UIWebView */
 }
+.mobile {font-size:200%;}
+.desktop {font-size:150%;}
 .views {overflow:auto;height:90%;}

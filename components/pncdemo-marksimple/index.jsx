@@ -10,7 +10,7 @@ var marksimple = React.createClass({
   mixins: [Require("markupdialogmixin")],
   execute:function(opts) {
     this.props.action("applyMarkup",{type:this.props.type,selections:opts.selections});
-  },
+  }, 
   render: function() {
     return null;
   }
