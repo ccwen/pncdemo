@@ -251,7 +251,7 @@ var textview = React.createClass({
     var M=underlines.levelMarkups(markups);
     var mid=0; //markup id
     
-    for (var i=tokens.length-1;i>0;i--) {
+    for (var i=tokens.length-1;i>=0;i--) {
       var classes="";
       
       if (tokens[i]=="\n") {
