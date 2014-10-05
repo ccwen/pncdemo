@@ -11,12 +11,15 @@ var textnavigator=React.createClass({
     this.props.action("prev");
   },
   render:function(){
-    if (!this.props.view) return <div></div>
+    if (!this.props.view) return <div></div>;
+    var nextextra="",prevextra="";
+    if (!this.props.buttons.next) nextextra=" disabled";
+    if (!this.props.buttons.prev) prevextra=" disabled";
     return (
       <div>
-        <button onClick={this.prev} className="btn btn-default">Prev</button>
+        <button onClick={this.prev} className={"btn btn-default"+prevextra}>Prev</button>
         {this.props.view.name}
-        <button onClick={this.next}className="btn btn-default">Next</button>
+        <button onClick={this.next}className={"btn btn-default"+nextextra}>Next</button>
       </div>
     )
 
@@ -47,11 +50,17 @@ var viewer = React.createClass({
       if (cur>0) this.setState({cur:cur-1});
     }
   },
+  getClickableButtons:function() {
+    var cur=this.state.cur;
+    var buttons={next:cur<this.props.views.length-1,prev:cur>0};
+    return buttons;
+  },
   render: function() {
+    var buttons=this.getClickableButtons();
     var v=this.props.views[this.state.cur];
     return (
       <div>
-        <textnavigator action={this.action} view={v}/>
+        <textnavigator action={this.action} view={v} buttons={buttons}/>
         {this.renderView()}
       </div>
     );
