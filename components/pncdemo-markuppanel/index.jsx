@@ -22,7 +22,7 @@ var markuppanel = React.createClass({
     var color="btn-default";
     var markupcaption=function() {
       if (m.caption.indexOf("glyphicon-")>-1) {
-        return <span title={m.type} className={"glyphicon "+m.caption}/>
+        return <span title={m.tag} className={"glyphicon "+m.caption}/>
       } else {
         return m.caption;
       }

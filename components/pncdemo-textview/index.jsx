@@ -89,7 +89,7 @@ var textview = React.createClass({
     });
     this.markupchanged=true;
   },
-  applyMarkup:function(type,ranges,payload) {
+  applyMarkup:function(tag,ranges,payload) {
     var markups=this.state.extra.markups;
     ranges.map(function(r,idx){
       if (idx==0 && payload) {
@@ -101,18 +101,18 @@ var textview = React.createClass({
           py.gid=payload.gid;
         }
       }
-      markups.push([r[0],r[1],type,py]);
+      markups.push([r[0],r[1],tag,py]);
     })
     this.clearRanges();
   },
   rangeToClasses:function(arr,i,prefix) {
     var out=[];
     arr.map(function(r){
-      var classes="",start=r[0],len=r[1],type=r[2], markuptype=this.state.extra.markuptype;
+      var classes="",start=r[0],len=r[1],tag=r[2], markuptag=this.state.extra.markuptag;
       var baseclass=r[2]||"selected";
       if (prefix) baseclass=prefix+baseclass;
-      var typemissmatch=(markuptype && type && markuptype!=type );
-      if (i>=start && i<start+len && !typemissmatch) {
+      var tagmissmatch=(markuptag && tag && markuptag!=tag );
+      if (i>=start && i<start+len && !tagmissmatch) {
         classes=baseclass;
         if (i==start) classes+=" "+baseclass+"_b";
         if (i==start+len-1) classes+=" "+baseclass+"_e";
@@ -138,7 +138,7 @@ var textview = React.createClass({
     }
 
     if (!sel) return;
-    var markups=this.markupAt(sel.start-1,this.state.extra.markuptype);
+    var markups=this.markupAt(sel.start-1,this.state.extra.markuptag);
     if (markups.length) {
         this.props.action("hoverToken",{view:this,token:e.target,x:e.pageX,y:e.pageY,markup:markups[0]});
         this.setState({hoverMarkup:markups[0]});
@@ -164,29 +164,29 @@ var textview = React.createClass({
     }    
     this.markupchanged=true;
   },
-  markupAt:function(n,type) {
+  markupAt:function(n,tag) {
     return this.state.extra.markups.filter(function(m){
       var start=m[0],len=m[1];
-      var typemissmatch=(type && m[2]!=type );
+      var typemissmatch=(tag && m[2]!=tag );
       return (n>=start && n<start+len && !typemissmatch);
     });
   },
   extraElement:function(n) {
     var out="";
-    var markups=this.markupAt(n,this.state.extra.markuptype);
+    var markups=this.markupAt(n,this.state.extra.markuptag);
     if (!markups.length) return out;
     markups.map(function(m){
-      var start=m[0],len=m[1],type=m[2],payload=m[3];
+      var start=m[0],len=m[1],tag=m[2],payload=m[3];
       if (!payload || !payload.insert) return;
       if ( (payload.insert=="end" && n==start+len-1)
       || (payload.insert=="start" && n==start) ){
-        if (type.substr(0,8)=="footnote") {
+        if (tag.substr(0,8)=="footnote") {
           this.footNoteCount++;
           var seq=payload.seq||this.footNoteCount;
           //var dataset={className:"extra_"+type,"data-n":n,key:this.extraCount++};
           //out.push(React.DOM.span(dataset,"\u00a0"+seq+"\u00a0"));
           //force 1em space
-          out='<span class="extra_'+type+'" data-n"='+n+'">\u00a0'+seq+'\u00a0</span>';
+          out='<span class="extra_'+tag+'" data-n"='+n+'">\u00a0'+seq+'\u00a0</span>';
         }
       }
     },this);
@@ -199,7 +199,7 @@ var textview = React.createClass({
     if (!target) return;
     if (target.nodeName!="SPAN") return;
     var n=parseInt(target.dataset['n']);
-    var markups=this.markupAt(n-1,this.state.extra.markuptype); //n-1 is a workaround
+    var markups=this.markupAt(n-1,this.state.extra.markuptag); //n-1 is a workaround
     if (markups.length) {
       if (this.state.hoverToken!=target) { //do not refresh if hovering on same token
         this.props.action("hoverToken",{view:this,token:target,x:x,y:y,markup:markups[0]});
@@ -252,8 +252,8 @@ var textview = React.createClass({
   },
   getOnScreenMarkups:function(){
     var markups=this.state.extra.markups;
-    var markuptype=this.state.extra.markuptype;
-    if (markuptype) return markups.filter(function(m){return m[2]==markuptype;});
+    var markuptag=this.state.extra.markuptag;
+    if (markuptag) return markups.filter(function(m){return m[2]==markuptag;});
     else return markups;
   },
   toXML:function(s) {

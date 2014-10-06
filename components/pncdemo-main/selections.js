@@ -25,7 +25,7 @@ var applyMarkup=function(opts) {
 	opts.selections.map(function(s,idx){
 		var view=s[0], ranges=s[1],py=opts.payload;
 		if (idx>0) py={shadow:true, gid:opts.payload.gid}; //only first selection has payload
-		s[0].action("applyMarkup",opts.type,ranges,py);
+		s[0].action("applyMarkup",opts.tag,ranges,py);
 	});
 }
 
@@ -39,10 +39,10 @@ var applyLink=function(opts) {
 	var py=JSON.parse(JSON.stringify(opts.payload));
 	py.target=view1.getName();
 	py.ranges=range2;
-	view1.action("applyMarkup",opts.type,range1,py);	
+	view1.action("applyMarkup",opts.tag,range1,py);	
 
 	var shadowpy={target:view2.getName(), shadow:true, gid:py.gid};
-	view2.action("applyMarkup",opts.type,range2,shadowpy);	
+	view2.action("applyMarkup",opts.tag,range2,shadowpy);	
 }
 
 var clear=function(opts){

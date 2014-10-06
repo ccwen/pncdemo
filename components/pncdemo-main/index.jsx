@@ -39,7 +39,7 @@ var main = React.createClass({
      // menuitems:this.selection_menuitems(),
       menupayload:{}
       ,markupdialog:markuppanel.defaultDialog
-      ,markuptype:null
+      ,markuptag:null
     };
 
   },
@@ -84,8 +84,8 @@ var main = React.createClass({
     if (this.refs.markupdialog) {
       appendable=!!this.refs.markupdialog.appendable;
     }
-    var readonly=!this.state.markuptype;
-    return {markuptype:this.state.markuptype, 
+    var readonly=!this.state.markuptag;
+    return {markuptag:this.state.markuptag, 
       appendable:appendable,
       hovergid:this.state.hovergid,deletinggid:this.deletinggid, 
       markups: markups , readonly:readonly, 
@@ -142,7 +142,7 @@ var main = React.createClass({
     } else if (action=="hoverToken") {
       this.hoveringToken(opts);
     } else if (action=="setMarkupDialog") {
-      this.setState({markupopts:opts,markupdialog:opts.dialog, markuptype:opts.type});
+      this.setState({markupopts:opts,markupdialog:opts.dialog, markuptag:opts.tag});
       this.setState({hoverToken:null,hoverMarkup:null});
       this.allmarkupchanged=true;
     } else if (action=="clearSelection") {
@@ -200,10 +200,10 @@ var main = React.createClass({
       <div id="main"> 
         <controlpanel action={this.action}/>
         <markuppanel action={this.action}/>
-        {this.state.markupdialog?this.state.markupdialog({ref:"markupdialog",action:this.action,type:this.state.markuptype,title:this.state.markupdialog_title}):null}
+        {this.state.markupdialog?this.state.markupdialog({ref:"markupdialog",action:this.action,tag:this.state.markuptag,title:this.state.markupdialog_title}):null}
         <div>
         <hoverMenu action={this.action} 
-          readonly={!this.state.markuptype}
+          readonly={!this.state.markuptag}
           markup={this.state.hoverMarkup} target={this.state.hoverToken} 
           editable={markupeditable} x={this.state.x} y={this.state.y}/> 
         <div className="views">

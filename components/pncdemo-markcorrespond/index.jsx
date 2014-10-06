@@ -12,7 +12,7 @@ var markcorrespond = React.createClass({
   },
   appendable:true,
   execute:function(opts) {
-    this.props.action("applyLink",{type:"correspond",
+    this.props.action("applyLink",{tag:"correspond",
             selections:opts.selections,payload:{}});
   },
   render: function() {

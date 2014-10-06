@@ -4,7 +4,7 @@
 
 var markintertext = React.createClass({
   getInitialState: function() {
-     return { type: this.props.type || "intertext"};
+     return { tag: this.props.tag || "intertext"};
   },
   mixins: [Require("markupdialogmixin")],
   allow:function(opts) {
@@ -27,7 +27,7 @@ var markintertext = React.createClass({
     var payload={insert:"end",content:content,linktype:linktype};
     this.refs.linktype.getDOMNode().value="";
     this.refs.content.getDOMNode().value="";
-    var args={selections:opts.selections,type:this.state.type,payload:payload};
+    var args={selections:opts.selections,tag:this.state.tag,payload:payload};
     return args;
   },
   create:function(opts) {

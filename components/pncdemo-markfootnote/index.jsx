@@ -44,7 +44,7 @@ var markfootnote = React.createClass({
     },this);
 
     this.refs.content.getDOMNode().value="";
-    var args={selections:opts.selections,type:this.props.type,payload:payload};
+    var args={selections:opts.selections,tag:this.props.tag,payload:payload};
     return args;
   },
   create:function(opts) {
