@@ -9,7 +9,8 @@ var markintertext = React.createClass({
   mixins: [Require("markupdialogmixin")],
   allow:function(opts) {
     return (opts.selections.length==2);//two view
-  }, 
+  },
+  appendable:true,
   execute:function() {
  
   },

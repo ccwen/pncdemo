@@ -10,6 +10,7 @@ var markcorrespond = React.createClass({
   allow:function(opts) {
     return (opts.selections.length==2);//one range
   },
+  appendable:true,
   execute:function(opts) {
     this.props.action("applyLink",{type:"correspond",
             selections:opts.selections,payload:{}});

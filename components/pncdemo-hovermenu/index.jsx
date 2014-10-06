@@ -21,7 +21,7 @@ var hovermenu = React.createClass({
   },
   renderContent:function() {
     var content="";
-    if (this.props.markup && this.props.markup[2]) {
+    if (this.props.markup && this.props.markup[3]) {
       content=this.props.markup[3].content;
     }
     return <div>{content}</div>
@@ -49,7 +49,9 @@ var hovermenu = React.createClass({
       //console.log(pRect.top,rect.top ,  rect.top-pRect.top);
       dom.style.visibility="visible"; 
       dom.style.left = this.props.x- dom.offsetWidth/2+"px";//this.props.x-dom.offsetWidth/2+"px";
-      dom.style.top  = rect.top+dom.offsetHeight/2+"px";//this.props.y-dom.offsetTop/2+"px";
+      var top=rect.top;
+      if (top==0) top=this.props.y-dom.offsetHeight/2; //workaround, some time getBoundingClientRect return 0
+      dom.style.top  = top+dom.offsetHeight/2+"px";//this.props.y-dom.offsetTop/2+"px";
     } else {
       dom.style.visibility="hidden";
     }

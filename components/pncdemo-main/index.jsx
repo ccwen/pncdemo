@@ -27,11 +27,13 @@ function detectmob() {
 }
 var main = React.createClass({
   selection_menuitems:function() {
-    return [
+    return [ 
       //{caption:"Add",handler:this.addSelection, previousView:null}
     ]
   },
   getInitialState: function() {
+    this.markupchanged={}; 
+    this.allmarkupchanged=false;
     React.initializeTouchEvents(true);
     return {
      // menuitems:this.selection_menuitems(),
@@ -39,6 +41,7 @@ var main = React.createClass({
       ,markupdialog:markuppanel.defaultDialog
       ,markuptype:null
     };
+
   },
   clearMarkup:function(opts,idx) {
     //console.log("clearMarkup");
@@ -50,6 +53,8 @@ var main = React.createClass({
   },
   componentDidUpdate:function() {
     this.deletinggid=null;
+    this.markupchanged={};
+    this.allmarkupchanged=false;
   },
   loadMarkups:function(views) {
     var keys=[];
@@ -67,7 +72,7 @@ var main = React.createClass({
     }
 
   },
-  viewExtra:function(name) {
+  getViewExtra:function(name,instance) {
     var match=[];
     if (this.state.bulk) match=this.state.bulk.filter(function(m){
       return (m._id==name);
@@ -75,8 +80,16 @@ var main = React.createClass({
     var markups=[];
     if (match.length) markups=match[0].markups;
     var views=[];
+    var appendable=false;
+    if (this.refs.markupdialog) {
+      appendable=!!this.refs.markupdialog.appendable;
+    }
     var readonly=!this.state.markuptype;
-    return {markuptype:this.state.markuptype, hovergid:this.state.hovergid,deletinggid:this.deletinggid, markups: markups , readonly:readonly};
+    return {markuptype:this.state.markuptype, 
+      appendable:appendable,
+      hovergid:this.state.hovergid,deletinggid:this.deletinggid, 
+      markups: markups , readonly:readonly, 
+      markupchanged:(!!this.markupchanged[name] || this.allmarkupchanged) };
   },
   getMenuPayload:function(opts) {
     return {
@@ -99,6 +112,23 @@ var main = React.createClass({
   updateSelection:function(view,ranges) {
     selections.update(view,ranges);
   },
+  hoveringToken:function(opts) {
+  if (this.state.hoverToken!=opts.token || this.state.hoverMarkup!=opts.markup) {
+      //do not show hover menu for shadow markup
+      if (opts.markup) {
+        var gid=null;
+        if (opts.markup[3] &&opts.markup[3].gid) gid=opts.markup[3].gid;
+        if ((opts.markup[3] && opts.markup[3].shadow)){
+          this.setState({activeView:opts.view,hoverMarkup:opts.markup,hovergid:gid,hoverToken:null}); //set hoverToken to null so that  show hover menu is hidden
+        } else {
+          this.setState({activeView:opts.view, x:opts.x, y:opts.y,
+            hoverMarkup:opts.markup,hoverToken:opts.token,hovergid:gid});
+        }          
+      } else {
+        this.setState({hoverMarkup:null,hoverToken:null,hovergid:null});
+      }
+    }    
+  },
   action: function() {
     var args = [];
     Array.prototype.push.apply( args, arguments );
@@ -109,28 +139,14 @@ var main = React.createClass({
       this.updateSelection(opts.view,opts.ranges);
       if (action=="selection") this.createMarkup();
     } else if (action=="hoverToken") {
-      if (this.state.hoverToken!=opts.token ||
-          this.state.hoverMarkup!=opts.markup) {
-        //do not show hover menu for shadow markup
-        if (opts.markup) {
-          var gid=null;
-          if (opts.markup[3] &&opts.markup[3].gid) gid=opts.markup[3].gid;
-
-          if ((opts.markup[3] && opts.markup[3].shadow)){
-            this.setState({activeView:opts.view,hoverMarkup:opts.markup,hovergid:gid,hoverToken:null}); //set hoverToken to null so that  show hover menu is hidden
-          } else {
-            this.setState({activeView:opts.view, x:opts.x, y:opts.y,
-              hoverMarkup:opts.markup,hoverToken:opts.token,hovergid:gid});
-          }          
-        } else {
-          this.setState({hoverMarkup:null,hoverToken:null,hovergid:null});
-        }
-      }
+      this.hoveringToken(opts);
     } else if (action=="setMarkupDialog") {
       this.setState({markupdialog:opts.dialog, markuptype:opts.type,markupdialog_title:opts.title,markupeditable:opts.editable});
       this.setState({hoverToken:null,hoverMarkup:null});
+      this.allmarkupchanged=true;
     } else if (action=="clearSelection") {
       selections.clear(opts);
+      this.allmarkupchanged=true;
     } else if (action=="applyMarkup") {
       selections.applyMarkup(opts);
       this.action("clearSelection");
@@ -153,10 +169,17 @@ var main = React.createClass({
       persistent.saveMarkups(this.state.bulk);
     } else if (action=="resetMarkups") {
       persistent.resetMarkups(this.state.bulk);
+      this.allmarkupchanged=true;
       this.forceUpdate();
     } else if (action=="dataset") {
       this.setState({views:opts});
       this.loadMarkups(opts);
+    } else if (action=="markupApplyable") {
+      if (this.refs.markupdialog && this.refs.markupdialog.allow) {
+        var sels=selections.get();
+        return this.refs.markupdialog.allow({selections:sels});
+      }
+      return false;
     }
   },
 
@@ -183,10 +206,10 @@ var main = React.createClass({
           editable={this.state.markupeditable} x={this.state.x} y={this.state.y}/> 
         <div className="views">
         <div className={"col-md-"+leftcol}>
-          <viewer view={textview} action={this.action} views={left} extra={this.viewExtra}  />
+          <viewer view={textview} action={this.action} views={left} getExtra={this.getViewExtra}  />
         </div>
         <div className={"col-md-"+rightcol}>
-          <viewer view={textview} action={this.action} views={right} extra={this.viewExtra} />
+          <viewer view={textview} action={this.action} views={right} getExtra={this.getViewExtra} />
         </div>
         </div>
         </div>

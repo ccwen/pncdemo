@@ -22,27 +22,35 @@ var textview = React.createClass({
     this.footNoteCount=0;
   },
   shouldComponentUpdate:function(nextProps,nextState) {
-    if (nextProps.extra.deletinggid) {
-      var newmarkups=this.props.extra.markups.filter(function(m){
-        return !m[3] || nextProps.extra.deletinggid!=m[3].gid;
+    var changed=false;
+    var extra=nextState.extra=nextProps.getExtra(this.props.name,this);
+    if (extra.deletinggid) {
+      var newmarkups=this.state.extra.markups.filter(function(m){
+        return !m[3] || extra.deletinggid!=m[3].gid;
       },this);
       nextState.hoverMarkup=null;
+      changed=true;
       this.setMarkups(newmarkups);
     };
     var textchanged=(nextProps.text!=this.props.text);
     if (textchanged) this.tokenized=null;
-    //return textchanged;
-    return true;
+
+    changed = changed || (extra.hovergid != this.state.extra.hovergid);
+    changed = changed || extra.markupchanged|| this.markupchanged ;
+    changed = changed || (nextState.appendingSelection!=this.state.appendingSelection);
+    nextState.extra.markupchanged=false;
+    this.markupchanged=false;
+    return textchanged || changed;
   },
   getInitialState: function() {
     this.resetCount();
-    return {ranges:[] };
+    this.markupchanged=false;
+    return {ranges:[],extra:{markups:[]}};
   },
   componentWillUpdate:function() {
     this.resetCount();
   },
-  addSelection:function(start,len) {
-    var ranges=this.state.ranges;
+  addSelection:function(ranges,start,len) {
     ranges.push([start-1,len]);
     this.setState({ranges:ranges});
     return ranges;
@@ -63,34 +71,26 @@ var textview = React.createClass({
       this.setState({refresh:true,hoverMarkup:null});
     } else if (action=="clearRanges") {
       this.clearRanges();
+      this.markupchanged=true;
     } else if (action=="deleteMarkup") {
       this.setState({hoverMarkup:null});
-      var markups=this.props.extra.markups.filter(function(m){
+      var markups=this.state.extra.markups.filter(function(m){
         return !this.sameMarkup(m,opts);
       },this);
       this.setMarkups(markups);
     }
   },
   setMarkups:function(newmarkups) {
-    var markups=this.props.extra.markups;
+    var markups=this.state.extra.markups;
     markups.splice(0,markups.length);
 
     newmarkups.map(function(m){
       markups.push(m);
     });
-  },
-  clearMarkup:function(type,start) {
-    /*
-    start++;//should remove it in the future
-    var ranges=this.state.ranges.filter(function(r){
-      return ! ((r.type==type) && (start>=r.start && start<r.start+r.len));
-    });
-    this.setState({ranges:ranges});
-    console.log("clear",type,start);
-    */
+    this.markupchanged=true;
   },
   applyMarkup:function(type,ranges,payload) {
-    var markups=this.props.extra.markups;
+    var markups=this.state.extra.markups;
     ranges.map(function(r,idx){
       if (idx==0 && payload) {
         var py=JSON.parse(JSON.stringify(payload));  
@@ -103,12 +103,12 @@ var textview = React.createClass({
       }
       markups.push([r[0],r[1],type,py]);
     })
-    this.forceUpdate();
+    this.clearRanges();
   },
   rangeToClasses:function(arr,i,prefix) {
     var out=[];
     arr.map(function(r){
-      var classes="",start=r[0],len=r[1],type=r[2], markuptype=this.props.extra.markuptype;
+      var classes="",start=r[0],len=r[1],type=r[2], markuptype=this.state.extra.markuptype;
       var baseclass=r[2]||"selected";
       if (prefix) baseclass=prefix+baseclass;
       var typemissmatch=(markuptype && type && markuptype!=type );
@@ -122,13 +122,11 @@ var textview = React.createClass({
     return out;
   },
   clearRanges:function() {
-    if (this.state.ranges.length) {
-      this.setState({ranges:[],hoverMarkup:null});
-    }
-    //this.clearWindowSelection();
+    this.setState({ranges:[],hoverMarkup:null});
+    this.markupchanged=true;
   },
   mouseUp:function(e) { 
-    if (this.props.extra.readonly) return;
+    if (this.state.extra.readonly) return;
     if (this.touchstartn>-1) {
       sel={start:this.touchstartn, len:this.touchendn-this.touchstartn+1};
       if (sel.len>10) {
@@ -138,22 +136,36 @@ var textview = React.createClass({
     } else {
       var sel=getselection();  
     }
-    if (e && e.ctrlKey && sel && sel.len) {
+
+    if (!sel) return;
+    var markups=this.markupAt(sel.start-1,this.state.extra.markuptype);
+    if (markups.length) {
+        this.props.action("hoverToken",{view:this,token:e.target,x:e.pageX,y:e.pageY,markup:markups[0]});
+        this.setState({hoverMarkup:markups[0]});
+        return;
+    }
+
+    if (e && (e.ctrlKey || this.state.appendingSelection) && sel && sel.len) {
       //var x=e.pageX,y=e.pageY;
-      var ranges=this.addSelection(sel.start,sel.len);
+      var ranges=this.addSelection(this.state.ranges,sel.start,sel.len);
       this.props.action("appendSelection",{ranges:ranges,view:this});
+      this.setState({appendingSelection:false});
     } else {
       if (sel && sel.len) {
-        var ranges=this.addSelection(sel.start,sel.len);
-        this.props.action("selection",{ranges:ranges, view:this});
+        var ranges=this.state.ranges;
+        //clear other selection when markup not applyable
+        if (!this.props.action("markupApplyable")) ranges=[];
+        var ranges=this.addSelection(ranges,sel.start,sel.len);
+        this.props.action("selection",{ranges:ranges, view:this});        
       } else {
         this.props.action("selection",{ranges:null,view:this});
         this.clearRanges();
       }
     }    
+    this.markupchanged=true;
   },
   markupAt:function(n,type) {
-    return this.props.extra.markups.filter(function(m){
+    return this.state.extra.markups.filter(function(m){
       var start=m[0],len=m[1];
       var typemissmatch=(type && m[2]!=type );
       return (n>=start && n<start+len && !typemissmatch);
@@ -161,7 +173,7 @@ var textview = React.createClass({
   },
   extraElement:function(n) {
     var out="";
-    var markups=this.markupAt(n,this.props.extra.markuptype);
+    var markups=this.markupAt(n,this.state.extra.markuptype);
     if (!markups.length) return out;
     markups.map(function(m){
       var start=m[0],len=m[1],type=m[2],payload=m[3];
@@ -187,7 +199,7 @@ var textview = React.createClass({
     if (!target) return;
     if (target.nodeName!="SPAN") return;
     var n=parseInt(target.dataset['n']);
-    var markups=this.markupAt(n-1,this.props.extra.markuptype); //n-1 is a workaround
+    var markups=this.markupAt(n-1,this.state.extra.markuptype); //n-1 is a workaround
     if (markups.length) {
       if (this.state.hoverToken!=target) { //do not refresh if hovering on same token
         this.props.action("hoverToken",{view:this,token:target,x:x,y:y,markup:markups[0]});
@@ -224,10 +236,10 @@ var textview = React.createClass({
   isHovering:function(i){
     var M=this.state.hoverMarkup;
     var hovering=false;
-    var gid=this.props.extra.hovergid;
+    var gid=this.state.extra.hovergid;
     if (M&&M[3] && M[3].gid) gid=M[3].gid;
     if (gid){ //find same gid with other view
-      this.props.extra.markups.map(function(m){
+      this.state.extra.markups.map(function(m){
         var start=m[0],len=m[1];
         hovering=hovering||
           ((m[3] && m[3].gid==gid) && (i>=start && i<start+len));
@@ -239,8 +251,8 @@ var textview = React.createClass({
     }
   },
   getOnScreenMarkups:function(){
-    var markups=this.props.extra.markups;
-    var markuptype=this.props.extra.markuptype;
+    var markups=this.state.extra.markups;
+    var markuptype=this.state.extra.markuptype;
     if (markuptype) return markups.filter(function(m){return m[2]==markuptype;});
     else return markups;
   },
@@ -291,15 +303,15 @@ var textview = React.createClass({
       this.touchstartelement=e.target;
       this.range=document.createRange();     
     } else {
-      this.clearSelected();
+      //this.clearSelected();
       this.touchstartn=-1;
       this.range=null;
-    }
+    } 
   },
   markSelection:function() {
     var from=this.touchstartn;
     var to=this.touchendn;
-    this.clearSelected();
+    //this.clearSelected();
     for (var i=from;i<=to;i++) {
       var node=$(this.getDOMNode()).find("span[data-n='"+i+"']")[0];
       if (i==from) node.classList.add("selected_b");
@@ -342,10 +354,23 @@ var textview = React.createClass({
   touchEnd:function(e){
     //console.log(this.touchstartelement,this.touchendelement);
     this.mouseUp(e);
+  }, 
+  setAppending:function() {
+    this.setState({appendingSelection:true})
+  },
+  renderExtraControls:function() {
+    if (this.state.extra.appendable) {
+      var color="btn-default";
+      if (this.state.appendingSelection) color="btn-primary";
+      return <button onClick={this.setAppending} className={"btn appending "+color}>Sel <span className="glyphicon glyphicon-plus"/></button>  
+    } else {
+      return null;
+    }
   },
   render: function() {
     return (
       <div>
+        {this.renderExtraControls()}
         <div className="textview" 
           onTouchStart={this.touchStart}
           onTouchMove={this.touchMove}

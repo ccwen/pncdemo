@@ -4,6 +4,9 @@
 
 //var othercomponent=Require("other"); 
 var textnavigator=React.createClass({
+  getInitialState:function() {
+    return {appendingSelection:false}
+  },
   next:function() {
     this.props.action("next");
   },
@@ -12,14 +15,14 @@ var textnavigator=React.createClass({
   },
   render:function(){
     if (!this.props.view) return <div></div>;
-    var nextextra="",prevextra="";
-    if (!this.props.buttons.next) nextextra=" disabled";
-    if (!this.props.buttons.prev) prevextra=" disabled";
+    var nextclasses="",prevclasses="";
+    if (!this.props.buttons.next) nextclasses=" disabled";
+    if (!this.props.buttons.prev) prevclasses=" disabled";
     return (
-      <div>
-        <button onClick={this.prev} className={"btn btn-default"+prevextra}>Prev</button>
-        {this.props.view.name}
-        <button onClick={this.next}className={"btn btn-default"+nextextra}>Next</button>
+      <div> 
+        <button onClick={this.prev} className={"btn  btn-default"+prevclasses}><span className="glyphicon glyphicon-chevron-left"/></button>
+        <span className="pagetitle">{this.props.view.name}</span>
+        <button onClick={this.next} className={"btn  btn-default"+nextclasses}><span className="glyphicon glyphicon-chevron-right"/></button>
       </div>
     )
 
@@ -34,7 +37,8 @@ var viewer = React.createClass({
     var v=this.props.views[this.state.cur];
     return this.props.view({
       action:this.props.action
-      ,extra:this.props.extra(v.name)
+      ,getExtra:this.props.getExtra
+      ,name:v.name
       ,text:v.content
     });
   },
@@ -60,7 +64,7 @@ var viewer = React.createClass({
     var v=this.props.views[this.state.cur];
     return (
       <div>
-        <textnavigator action={this.action} view={v} buttons={buttons}/>
+        <textnavigator getExtra={this.props.getExtra} action={this.action} view={v} buttons={buttons}/>
         {this.renderView()}
       </div>
     );

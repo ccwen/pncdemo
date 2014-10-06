@@ -8,28 +8,41 @@ var markuppanel = React.createClass({
   getInitialState: function() {
     return {bar: "world", markups:default_markups, selected:this.props.mode||0};
   },
-  activateMarkup:function(e) {
-    var n=e.target.dataset['n']; 
+  activateMarkup:function(n) {
     var m=this.state.markups[n];
     this.props.action("setMarkupDialog",{type:m.type,dialog:m.dialog, title:m.caption,editable:m.editable});
     this.setState({selected:n});
   },
+  onSelectMarkup:function(e) {
+    var n=e.target.dataset['n']; 
+    this.activateMarkup(n);
+  },
   renderMarkupButtons:function(m,idx) {
     var extra="";
     var color="btn-default";
+    var markupcaption=function() {
+      if (m.caption.indexOf("glyphicon-")>-1) {
+        return <span title={m.type} className={"glyphicon "+m.caption}/>
+      } else {
+        return m.caption;
+      }
+    }
     if (idx==this.state.selected) {
       extra=" active";
       color="btn-primary";
     }
     return <label key={"b"+idx} ref={"b"+idx} className={"btn "+color+extra}>
-      <input onChange={this.activateMarkup} type="radio" name="markup"
-      checked={idx==this.state.selected} data-n={idx}></input>{m.caption}
+      <input onChange={this.onSelectMarkup} type="radio" name="markup"
+      checked={idx==this.state.selected} data-n={idx}></input>
+      {markupcaption()}
     </label>
   },
   selectset:function(e) {
     var name=e.target.dataset["tagset"];
     var newtagset=require("./tagset_"+name);
     this.setState({markups:newtagset});
+    this.activateMarkup(0);
+    //this.props.action("setTagset",name,newtagset);
   },
   renderTagset:function() {
     return (

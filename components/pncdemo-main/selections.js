@@ -13,7 +13,9 @@ var guid = (function() {
 
 var setGUID=function(opts){ //need guid for multiple range or links
 	if (opts.selections.length>1
-	||opts.selections[0][1].length>1) {
+	|| (opts.selections[0] 
+		&&opts.selections[0].length>1
+		&&opts.selections[0][1].length>1)) {
 	 opts.payload.gid=guid();
 	}
 }
