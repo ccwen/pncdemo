@@ -8,12 +8,22 @@ var dataset={mn118:require("./mn118"),
  
 var controlpanel = React.createClass({
   getInitialState: function() {
-    return {bar: "world"};
+    return {bar: "world", saveCaption:"Save", resetCaption:"Reset"};
   },
   save:function() {
+    var that=this;
+    this.setState({saveCaption:"Saved!!!"});
+    setTimeout(function(){
+      that.setState({saveCaption:"Save"});
+    },3000);
     this.props.action("saveMarkups");
   },
   reset:function() {
+    var that=this;
+    this.setState({resetCaption:"Reset!!!"});
+    setTimeout(function(){
+      that.setState({resetCaption:"Reset"});
+    },3000);    
     this.props.action("resetMarkups");
   },
   selectset:function(e) {
@@ -27,7 +37,7 @@ var controlpanel = React.createClass({
     return (
       <div className="btn-group pull-right">
         <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        Dataset <span className="caret"></span>
+        Dataset <span className="glyphicon glyphicon-folder-open"/> <span className="caret"></span>
         </button>
         <ul onClick={this.selectset} className="dropdown-menu" role="menu">
           <li><a href="#" data-name="yijing">YiJing</a></li>
@@ -40,8 +50,8 @@ var controlpanel = React.createClass({
   render: function() {
     return (
       <div>
-        <button onClick={this.save} className="btn btn-success pull-right">Save</button>
-        <button onClick={this.reset} className="btn btn-danger pull-right">Reset</button>
+        <button onClick={this.save} className="btn btn-success pull-right">{this.state.saveCaption}</button>
+        <button onClick={this.reset} className="btn btn-danger pull-right">{this.state.resetCaption}</button>
         {this.renderDataset()}
       </div>
     );

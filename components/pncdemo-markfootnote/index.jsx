@@ -14,14 +14,35 @@ var markfootnote = React.createClass({
   execute:function() {
 
   },
+  componentDidUpdate:function() {
+    if (this.state.markup) {
+      this.loadMarkup(this.state.markup);
+    } else {//set default value
+      var fields=this.getFields();
+      fields.map(function(f){
+        this.refs[f.name].getDOMNode().value=f.defaultValue||"";
+      },this);
+    }
+  },
+  editable:true,
   loadMarkup:function(markup) {
     this.editing=markup;
     this.refs.content.getDOMNode().value=markup[3].content;
+    var fields=this.getFields();
+    fields.map(function(f){
+      this.refs[f.name].getDOMNode().value=markup[3][f.name];
+    },this);
   },
   packMarkup:function(opts) {
     opts=opts||{};
     var content=this.refs.content.getDOMNode().value;
+
     var payload={insert:"end",content:content};
+    var fields=this.getFields();
+    fields.map(function(f){
+      payload[f.name]=this.refs[f.name].getDOMNode().value;
+    },this);
+
     this.refs.content.getDOMNode().value="";
     var args={selections:opts.selections,type:this.props.type,payload:payload};
     return args;
@@ -37,14 +58,31 @@ var markfootnote = React.createClass({
   },
   cancel:function(opts) {
     this.props.action("clearSelection");
-  }, 
+  },
+  renderField:function(f) {
+    return <div className="input-group">
+      {f.name}<input ref={f.name} className="input" name={f.name}/>
+      </div>
+  },
+  getFields:function() {
+    if (this.opts && this.opts.options && this.opts.options.fields) {
+      return this.opts.options.fields || [];
+    } else return [];
+  },
+  renderExtraFields:function() {
+    var fields=this.getFields();
+    if (!fields.length) return;
+    return fields.map(this.renderField);
+  },
   renderBody:function() {
     return <div>
-    <textarea ref="content" className="form-control"></textarea>
+      <textarea ref="content" className="form-control"></textarea>
+      {this.renderExtraFields()}
     </div>   
   }, 
   onShow:function() {
-    this.refs.content.getDOMNode().focus();
+    var first=Object.keys(this.refs)[0];
+    this.refs[first].getDOMNode().focus();
   }, 
   render: function() {
     return this.renderDialog(this.renderBody);

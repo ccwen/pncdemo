@@ -107,7 +107,7 @@ var main = React.createClass({
   createMarkup:function() {
     var M=this.refs.markupdialog;
     if (!M) return;
-    M.activate({selections:selections.get()});
+    M.activate({selections:selections.get(), options:this.state.markupopts});
   },
   updateSelection:function(view,ranges) {
     selections.update(view,ranges);
@@ -127,7 +127,8 @@ var main = React.createClass({
       } else {
         this.setState({hoverMarkup:null,hoverToken:null,hovergid:null});
       }
-    }    
+    }
+    this.allmarkupchanged=true;
   },
   action: function() {
     var args = [];
@@ -141,7 +142,7 @@ var main = React.createClass({
     } else if (action=="hoverToken") {
       this.hoveringToken(opts);
     } else if (action=="setMarkupDialog") {
-      this.setState({markupdialog:opts.dialog, markuptype:opts.type,markupdialog_title:opts.title,markupeditable:opts.editable});
+      this.setState({markupopts:opts,markupdialog:opts.dialog, markuptype:opts.type});
       this.setState({hoverToken:null,hoverMarkup:null});
       this.allmarkupchanged=true;
     } else if (action=="clearSelection") {
@@ -160,7 +161,7 @@ var main = React.createClass({
       if (m[3] && m[3].gid) this.deletinggid=m[3].gid;
       this.setState({hoverToken:null,hoverMarkup:null,hovergid:null});
     } else if (action=="editMarkup") {
-      this.refs.markupdialog.edit(this.state.hoverMarkup);
+      this.refs.markupdialog.edit(this.state.hoverMarkup,this.state.markupopts);
       this.setState({hoverToken:null,hoverMarkup:null});
     } else if (action=="markupSaved") {
       this.state.activeView.action("markupSaved");
@@ -194,6 +195,7 @@ var main = React.createClass({
       right=this.state.views[1];
       rightcol=right[0].cols||rightcol;
     } 
+    var markupeditable=this.refs.markupdialog && this.refs.markupdialog.editable;
     return (
       <div id="main"> 
         <controlpanel action={this.action}/>
@@ -203,7 +205,7 @@ var main = React.createClass({
         <hoverMenu action={this.action} 
           readonly={!this.state.markuptype}
           markup={this.state.hoverMarkup} target={this.state.hoverToken} 
-          editable={this.state.markupeditable} x={this.state.x} y={this.state.y}/> 
+          editable={markupeditable} x={this.state.x} y={this.state.y}/> 
         <div className="views">
         <div className={"col-md-"+leftcol}>
           <viewer view={textview} action={this.action} views={left} getExtra={this.getViewExtra}  />

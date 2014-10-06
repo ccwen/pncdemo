@@ -10,7 +10,7 @@ var markuppanel = React.createClass({
   },
   activateMarkup:function(n) {
     var m=this.state.markups[n];
-    this.props.action("setMarkupDialog",{type:m.type,dialog:m.dialog, title:m.caption,editable:m.editable});
+    this.props.action("setMarkupDialog",m);
     this.setState({selected:n});
   },
   onSelectMarkup:function(e) {
@@ -48,7 +48,7 @@ var markuppanel = React.createClass({
     return (
       <div className="btn-group pull-right">
         <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        TagSet <span className="caret"></span>
+        TagSet<span className="glyphicon glyphicon-bookmark"/> <span className="caret"></span>
         </button>
         <ul onClick={this.selectset} className="dropdown-menu" role="menu">
           <li><a href="#" data-tagset="default">Default</a></li>

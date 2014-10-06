@@ -11,6 +11,7 @@ var markintertext = React.createClass({
     return (opts.selections.length==2);//two view
   },
   appendable:true,
+  editable:true,
   execute:function() {
  
   },
