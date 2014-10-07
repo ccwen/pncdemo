@@ -1,6 +1,8 @@
 /** @jsx React.DOM */
 
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
+var version="1.0.8";
+
 Require("bootstrap");
 var contextmenu=Require("contextmenu");
 var viewer=Require("viewer"); 
@@ -32,6 +34,7 @@ var main = React.createClass({
     ]
   },
   getInitialState: function() {
+    document.title=version+"-PNCDEMO";
     this.markupchanged={}; 
     this.allmarkupchanged=false;
     React.initializeTouchEvents(true);
@@ -41,7 +44,6 @@ var main = React.createClass({
       ,markupdialog:markuppanel.defaultDialog
       ,markuptag:null
     };
-
   },
   clearMarkup:function(opts,idx) {
     //console.log("clearMarkup");
