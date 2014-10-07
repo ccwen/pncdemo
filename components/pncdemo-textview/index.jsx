@@ -265,14 +265,16 @@ var textview = React.createClass({
     
     for (var i=tokens.length-1;i>=0;i--) {
       var classes="";
-      
       if (tokens[i]=="\n") {
         out='<br/>'+out;
         continue;
       }
-      
       while (mid<M.length && M[mid][1]==i+1) {
         var id=M[mid][0], pos =M[mid][1] ,tagtype=M[mid][2], level=M[mid][3];
+        if (!markups[id]) {
+          console.error("markups id ",id,"not found");
+          continue;
+        }
         var tag=markups[id][2];
         if (tagtype==underlines.TAG_START) out='<span class="markup_'+tag+' lv'+level+'">'+out;
         if (tagtype==underlines.TAG_END) out= '</span>' +out;
@@ -301,11 +303,11 @@ var textview = React.createClass({
       this.touchstartx=e.changedTouches[0].pageX;
       this.touchstarty=e.changedTouches[0].pageY;
       this.touchstartelement=e.target;
-      this.range=document.createRange();     
+      //this.range=document.createRange();     
     } else {
       //this.clearSelected();
       this.touchstartn=-1;
-      this.range=null;
+      //this.range=null;
     } 
   },
   markSelection:function() {
@@ -320,18 +322,18 @@ var textview = React.createClass({
     }
   },
   touchMove:function(e){
-    if (!this.touchstartn==-1) return;
+    if (!this.touchstartn==-1) return false;
     var T=e.changedTouches[0];
     var rect=e.target.getBoundingClientRect();
     var stopElement=this.findElement(T.pageX,T.pageY);//T.pageX-rect.left, T.pageY-rect.top);
     if (stopElement && stopElement.dataset.n) {
       this.touchendelement=stopElement;
       this.touchendn=stopElement.dataset.n;
-
       this.markSelection();
       //this.range.setStart(this.touchstartelement.firstChild,0);
       //this.range.setEnd(stopElement.firstChild, 1);
     }
+    e.preventDefault();
   },
   getOffset:function (object, offset) {
       if (!object) return;
@@ -352,9 +354,11 @@ var textview = React.createClass({
     return stopElement;
   },
   touchEnd:function(e){
-    //console.log(this.touchstartelement,this.touchendelement);
     this.mouseUp(e);
   }, 
+  touchCancel:function(e) {
+    console.log("touchcancel");
+  },
   setAppending:function() {
     this.setState({appendingSelection:true})
   },
@@ -375,6 +379,7 @@ var textview = React.createClass({
           onTouchStart={this.touchStart}
           onTouchMove={this.touchMove}
           onTouchEnd={this.touchEnd}
+          onTouchCancel={this.touchCancel}
           onMouseUp={this.mouseUp}
           onMouseOut={this.mouseOut}
           onMouseMove={this.mouseMove} dangerouslySetInnerHTML={{__html:this.toXML(this.props.text)}}>
