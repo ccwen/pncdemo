@@ -60,7 +60,8 @@ var main = React.createClass({
     var keys=[];
     views.map(function(t){t.map(function(m){keys.push(m.name)})});
     persistent.loadMarkups(keys,function(bulk){
-      this.setState({markupready:true,bulk:bulk});
+      this.allmarkupchanged=true;
+      this.setState({bulk:bulk});
     },this);
   },
   componentDidMount:function() {
