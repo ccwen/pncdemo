@@ -3,3 +3,11 @@
 *.pdf
 build.js
 build.css
+*.ldb
+pncdemo
+*.log
+LOCK
+LOG.*
+LOG
+MANIFEST*
+CURRENT

@@ -1,5 +1,7 @@
 var commentFields=[
-	{name:"extra1",defaultValue:"default e1"}
+	{name:"extra1",defaultValue:"default e1"},
+	{name:"attr2 ",defaultValue:"default val"},
+	{name:"attr3 ",defaultValue:"default val2"}
 ];
 module.exports=[
    {caption:"glyphicon-eye-open",tag:null,dialog: Require("markoverview")} //nothing happen
