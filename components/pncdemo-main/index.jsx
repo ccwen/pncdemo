@@ -4,12 +4,12 @@
 var version="1.0.8";
 
 Require("bootstrap");
-var contextmenu=Require("contextmenu");
-var viewer=Require("viewer"); 
-var textview=Require("textview");
-var controlpanel=Require("controlpanel");
-var markuppanel=Require("markuppanel");
-var hoverMenu=Require("hovermenu");
+var Contextmenu=Require("contextmenu");
+var Viewer=Require("viewer"); 
+var Textview=Require("textview");
+var Controlpanel=Require("controlpanel");
+var Markuppanel=Require("markuppanel");
+var HoverMenu=Require("hovermenu");
 var selections=require("./selections");
 var persistent=require("./persistent");
 function detectmob() { 
@@ -41,7 +41,7 @@ var main = React.createClass({
     return {
      // menuitems:this.selection_menuitems(),
       menupayload:{}
-      ,markupdialog:markuppanel.defaultDialog
+      ,markupdialog:Markuppanel.defaultDialog
       ,markuptag:null
     };
   },
@@ -201,20 +201,20 @@ var main = React.createClass({
     var markupeditable=this.refs.markupdialog && this.refs.markupdialog.editable;
     return (
       <div id="main"> 
-        <controlpanel action={this.action}/>
-        <markuppanel action={this.action}/>
+        <Controlpanel action={this.action}/>
+        <Markuppanel action={this.action}/>
         {this.state.markupdialog?this.state.markupdialog({ref:"markupdialog",action:this.action,tag:this.state.markuptag,title:this.state.markupdialog_title}):null}
         <div>
-        <hoverMenu action={this.action} 
+        <HoverMenu action={this.action} 
           readonly={!this.state.markuptag}
           markup={this.state.hoverMarkup} target={this.state.hoverToken} 
           editable={markupeditable} x={this.state.x} y={this.state.y}/> 
         <div className="views">
         <div className={"col-md-"+leftcol}>
-          <viewer view={textview} action={this.action} views={left} getExtra={this.getViewExtra}  />
+          <Viewer view={Textview} action={this.action} views={left} getExtra={this.getViewExtra}  />
         </div>
         <div className={"col-md-"+rightcol}>
-          <viewer view={textview} action={this.action} views={right} getExtra={this.getViewExtra} />
+          <Viewer view={Textview} action={this.action} views={right} getExtra={this.getViewExtra} />
         </div>
         </div>
         </div>

@@ -3,7 +3,7 @@
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
 
 //var othercomponent=Require("other"); 
-var textnavigator=React.createClass({
+var Textnavigator=React.createClass({
   getInitialState:function() {
     return {appendingSelection:false}
   },
@@ -64,7 +64,7 @@ var viewer = React.createClass({
     var v=this.props.views[this.state.cur];
     return (
       <div>
-        <textnavigator getExtra={this.props.getExtra} action={this.action} view={v} buttons={buttons}/>
+        <Textnavigator getExtra={this.props.getExtra} action={this.action} view={v} buttons={buttons}/>
         {this.renderView()}
       </div>
     );
