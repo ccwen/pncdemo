@@ -9,8 +9,7 @@ var markinternal2 = React.createClass({
   mixins: [Require("markupdialogmixin")],
 
   allow:function(opts) {
-    debugger;
-    if (!opts.selections|| !opts.selections[0].length) return;
+    if (!opts.selections.length|| !opts.selections[0].length) return;
     console.log("allow internal2",opts.selections[0][1].length);
     if (opts.selections.length!=1) return ;
 

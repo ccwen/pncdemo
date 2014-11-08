@@ -160,13 +160,9 @@ var textview = React.createClass({
         var allow=this.props.action("markupAllow");
         if (!allow) { //not allow
           ranges=[]; // reset 
-        } else if (allow=="more") { //for internal2
-          var ranges=this.addSelection(this.state.ranges,sel.start,sel.len);
-          this.props.action("appendSelection",{ranges:ranges,view:this});
-          return;
         }
         var ranges=this.addSelection(ranges,sel.start,sel.len);
-        this.props.action("selection",{ranges:ranges, view:this});        
+        this.props.action("selection",{ranges:ranges, view:this});
       } else {
         this.props.action("selection",{ranges:null,view:this});
         this.clearRanges();

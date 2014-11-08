@@ -70,7 +70,7 @@ var update=function(view,ranges){
 			} else {
 				selections.splice(i,1);
 			}
-			return;	
+			return selections;	
 		}
 	}
 	if (hasrange) {
