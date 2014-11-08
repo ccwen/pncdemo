@@ -30,7 +30,7 @@ var loadMarkups=function(keys,cb,context){
 }
 
 var resetMarkups=function(bulk) {
-	db.destroy("pncdemo");
+	//db.destroy("pncdemo");  //doesn't work on nodewebkit
 	bulk.map(function(b){
 		b.markups=[];
 	});

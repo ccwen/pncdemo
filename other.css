@@ -1,0 +1,6 @@
+.markup_hello {border-bottom: 1px solid purple;}
+.markup_sym {border-style:dashed;color:blue;border-width: 2px}
+.markup_sym.master {border-radius : 20px;border-style:solid;border-color:blue;}
+
+.markup_causeeffect {border-width:1px;border-style:dotted;border-color:red;}
+.markup_causeeffect.master {border-radius : 6px;border-style:solid;border-color:red;}

@@ -282,6 +282,8 @@ var textview = React.createClass({
           continue;
         }
         var tag=markups[id][2];
+        var payload=markups[id][3];
+        if (payload && !payload.shadow) tag+=" master";
         if (tagtype==underlines.TAG_START) out='<span class="markup_'+tag+' lv'+level+'">'+out;
         if (tagtype==underlines.TAG_END) out= '</span>' +out;
         mid++;
