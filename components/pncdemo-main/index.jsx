@@ -34,7 +34,7 @@ var main = React.createClass({
     ]
   },
   getInitialState: function() {
-    document.title=version+"-PNCDEMO";
+    document.title="漢譯佛典內容標誌系統(Yap Alpha 版)";
     this.markupchanged={}; 
     this.allmarkupchanged=false;
     React.initializeTouchEvents(true);
@@ -178,7 +178,7 @@ var main = React.createClass({
     } else if (action=="dataset") {
       this.setState({views:opts});
       this.loadMarkups(opts);
-    } else if (action=="markupApplyable") {
+    } else if (action=="markupAllow") {
       if (this.refs.markupdialog && this.refs.markupdialog.allow) {
         var sels=selections.get();
         return this.refs.markupdialog.allow({selections:sels});

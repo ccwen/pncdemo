@@ -8,6 +8,6 @@
   "development": {},
   "license": "MIT",
   "main": "index.js",
-  "scripts": ["index.js","tagset_default.js","tagset_news.js"],
+  "scripts": ["index.js","tagset_default.js","tagset_news.js","tagset_other.js"],
   "styles": ["index.css"]
 }

@@ -1,6 +1,6 @@
 {
-  "name": "controlpanel",
-  "repo": "pncdemo/controlpanel",
+  "name": "markinternal2",
+  "repo": "pncdemo/markinternal2",
   "description": "hello world",
   "version": "0.0.1",
   "keywords": [],
@@ -8,6 +8,6 @@
   "development": {},
   "license": "MIT",
   "main": "index.js",
-  "scripts": ["index.js","yijing.js","mn118.js","oclp.js","jingkang.js"],
+  "scripts": ["index.js"],
   "styles": ["index.css"]
 }

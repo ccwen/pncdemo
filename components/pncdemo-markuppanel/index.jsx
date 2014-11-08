@@ -2,11 +2,14 @@
 
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
 
-var default_markups=require("./tagset_default");
+var tagsets={standard:require("./tagset_default"),news:require("./tagset_news")
+,other:require("./tagset_other")};
+
 var news_markups=require("./tagset_news");
+
 var markuppanel = React.createClass({
   getInitialState: function() {
-    return {bar: "world", markups:default_markups, selected:this.props.mode||0};
+    return {bar: "world", markups:tagsets.other||tagsets.standard, selected:this.props.mode||0};
   },
   activateMarkup:function(n) {
     var m=this.state.markups[n];
@@ -39,9 +42,11 @@ var markuppanel = React.createClass({
   },
   selectset:function(e) {
     var name=e.target.dataset["tagset"];
-    var newtagset=require("./tagset_"+name);
-    this.setState({markups:newtagset});
-    this.activateMarkup(0);
+    var newtagset=tagsets[name];//require("./tagset_"+name);
+    if(newtagset) {
+      this.setState({markups:newtagset});
+      this.activateMarkup(0);      
+    }
     //this.props.action("setTagset",name,newtagset);
   },
   renderTagset:function() {
@@ -51,7 +56,8 @@ var markuppanel = React.createClass({
         TagSet<span className="glyphicon glyphicon-bookmark"/> <span className="caret"></span>
         </button>
         <ul onClick={this.selectset} className="dropdown-menu" role="menu">
-          <li><a href="#" data-tagset="default">Default</a></li>
+          <li><a href="#" data-tagset="standard">Default</a></li>
+          <li><a href="#" data-tagset="other">Other </a></li>
           <li><a href="#" data-tagset="news">News </a></li>
         </ul>
       </div>

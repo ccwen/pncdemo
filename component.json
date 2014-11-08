@@ -22,6 +22,8 @@
     "pncdemo/hovermenu": "*",
     "pncdemo/marksimple": "*",
     "pncdemo/markcorrespond": "*",
+    "pncdemo/markinternal": "*",
+    "pncdemo/markinternal2": "*",
     "pncdemo/markfootnote": "*",
     "pncdemo/markoverview": "*",
     "pncdemo/markintertext": "*",

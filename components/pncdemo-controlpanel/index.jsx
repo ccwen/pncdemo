@@ -2,9 +2,12 @@
 
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
 
-var dataset={mn118:require("./mn118"),
+var dataset={
+          mn118:require("./mn118"),
              yijing:require("./yijing"),
-             oclp:require("./oclp")};
+             oclp:require("./oclp"),
+             jingkang:require("./jingkang") //for huiping
+           };
  
 var controlpanel = React.createClass({
   getInitialState: function() {
@@ -40,9 +43,9 @@ var controlpanel = React.createClass({
         Dataset <span className="glyphicon glyphicon-folder-open"/> <span className="caret"></span>
         </button>
         <ul onClick={this.selectset} className="dropdown-menu" role="menu">
-          <li><a href="#" data-name="yijing">YiJing</a></li>
+          <li><a href="#" data-name="jingkang">JingKang</a></li>
+          <li><a href="#" data-name="yijing">YiJing</a></li>          
           <li><a href="#" data-name="mn118">Ānāpānasatisuttaṁ</a></li>
-          <li><a href="#" data-name="oclp">Occupy Central with Love and Peace</a></li>
         </ul>
       </div>
       );
@@ -58,3 +61,5 @@ var controlpanel = React.createClass({
   }
 });
 module.exports=controlpanel;
+
+//<li><a href="#" data-name="oclp">Occupy Central with Love and Peace</a></li>

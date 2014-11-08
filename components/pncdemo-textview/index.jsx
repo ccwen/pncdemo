@@ -157,7 +157,14 @@ var textview = React.createClass({
       if (sel && sel.len) {
         var ranges=this.state.ranges;
         //clear other selection when markup not applyable
-        if (!this.props.action("markupApplyable")) ranges=[];
+        var allow=this.props.action("markupAllow");
+        if (!allow) { //not allow
+          ranges=[]; // reset 
+        } else if (allow=="more") { //for internal2
+          var ranges=this.addSelection(this.state.ranges,sel.start,sel.len);
+          this.props.action("appendSelection",{ranges:ranges,view:this});
+          return;
+        }
         var ranges=this.addSelection(ranges,sel.start,sel.len);
         this.props.action("selection",{ranges:ranges, view:this});        
       } else {
