@@ -25,6 +25,7 @@
     "pncdemo/markinternal": "*",
     "pncdemo/markinternal2": "*",
     "pncdemo/markfootnote": "*",
+    "pncdemo/markusernote": "*",    
     "pncdemo/markoverview": "*",
     "pncdemo/markintertext": "*",
     "pncdemo/controlpanel": "*",

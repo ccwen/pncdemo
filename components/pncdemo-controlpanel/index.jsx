@@ -6,7 +6,7 @@ var dataset={
           mn118:require("./mn118"),
              yijing:require("./yijing"),
              oclp:require("./oclp"),
-             jingkang:require("./jingkang") //for huiping
+             jingkang:nodeRequire("./jingkang") //for huiping
            };
  
 var controlpanel = React.createClass({
@@ -34,7 +34,7 @@ var controlpanel = React.createClass({
     this.props.action("dataset",dataset[name]);
   },
   componentDidMount:function() {
-    this.props.action("dataset",dataset["yijing"]);
+    this.props.action("dataset",dataset["jingkang"]);
   },
   renderDataset:function() {
     return (

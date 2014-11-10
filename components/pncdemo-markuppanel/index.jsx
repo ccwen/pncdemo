@@ -2,14 +2,19 @@
 
 /* to rename the component, change name of ./component.js and  "dependencies" section of ../../component.js */
 
-var tagsets={standard:require("./tagset_default"),news:require("./tagset_news")
-,other:require("./tagset_other")};
+var tagsets={//standard:require("./tagset_default"),
+standard:require("./tagset_def")
+,content:require("./tagset_content")
+,author:require("./tagset_author")
+,reader:require("./tagset_reader")
+
+};
 
 var news_markups=require("./tagset_news");
 
 var markuppanel = React.createClass({
   getInitialState: function() {
-    return {bar: "world", markups:tagsets.other||tagsets.standard, selected:this.props.mode||0};
+    return {bar: "world", markups:tagsets.standard, selected:this.props.mode||0};
   },
   activateMarkup:function(n) {
     var m=this.state.markups[n];
@@ -56,9 +61,10 @@ var markuppanel = React.createClass({
         TagSet<span className="glyphicon glyphicon-bookmark"/> <span className="caret"></span>
         </button>
         <ul onClick={this.selectset} className="dropdown-menu" role="menu">
-          <li><a href="#" data-tagset="standard">Default</a></li>
-          <li><a href="#" data-tagset="other">Other </a></li>
-          <li><a href="#" data-tagset="news">News </a></li>
+          <li><a href="#" data-tagset="standard">內容意義</a></li>
+          <li><a href="#" data-tagset="content">內容關係</a></li>
+          <li><a href="#" data-tagset="author">作者表達</a></li>
+          <li><a href="#" data-tagset="reader">讀者表達</a></li>
         </ul>
       </div>
       );

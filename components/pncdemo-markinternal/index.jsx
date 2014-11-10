@@ -12,7 +12,6 @@ var markinternal = React.createClass({
   },
   appendable:true,
   execute:function(opts) {
-    debugger;
     this.props.action("applyMarkup",{tag:this.props.tag,
             selections:opts.selections,payload:{}});
   },

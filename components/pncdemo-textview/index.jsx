@@ -183,6 +183,7 @@ var textview = React.createClass({
     if (!markups.length) return out;
     markups.map(function(m){
       var start=m[0],len=m[1],tag=m[2],payload=m[3];
+      console.log(tag);
       if (!payload || !payload.insert) return;
       if ( (payload.insert=="end" && n==start+len-1)
       || (payload.insert=="start" && n==start) ){
@@ -193,7 +194,7 @@ var textview = React.createClass({
           //out.push(React.DOM.span(dataset,"\u00a0"+seq+"\u00a0"));
           //force 1em space
           out='<span class="extra_'+tag+'" data-n"='+n+'">\u00a0'+seq+'\u00a0</span>';
-        }
+        };
       }
     },this);
     return out;

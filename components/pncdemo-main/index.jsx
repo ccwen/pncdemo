@@ -34,7 +34,7 @@ var main = React.createClass({
     ]
   },
   getInitialState: function() {
-    document.title="漢譯佛典內容標誌系統(Yap Alpha 版)";
+    document.title="漢譯佛典內容標誌系統(Yap Alpha 版) 2014.11.10";
     this.markupchanged={}; 
     this.allmarkupchanged=false;
     React.initializeTouchEvents(true);

@@ -1,6 +1,84 @@
-.markup_hello {border-bottom: 1px solid purple;}
-.markup_sym {border-style:dashed;color:blue;border-width: 2px}
-.markup_sym.master {border-radius : 20px;border-style:solid;border-color:blue;}
 
-.markup_causeeffect {border-width:1px;border-style:dotted;border-color:red;}
-.markup_causeeffect.master {border-radius : 6px;border-style:solid;border-color:red;}
+.markup_defination {border-bottom: 2px dotted red;}
+.markup_defination:after {content:url("images/defination.png")}
+.markup_defination.master {border-bottom-style: solid;}
+.markup_defination.master:after {content:""}
+
+.markup_person {border-bottom: 2px dotted #2F8A55;}
+.markup_matter {border-bottom: 2px dotted purple;}
+.markup_time {border-bottom: 2px dotted blue;}
+.markup_place {border-bottom: 2px dotted orange;}
+.markup_thing {border-bottom: 2px dotted pink;}
+
+.markup_eating {border-bottom: 2px dashed red;}
+.markup_clothing {border-bottom: 2px dashed purple;}
+.markup_housing {border-bottom: 2px dashed blue;}
+.markup_traffic {border-bottom: 2px dashed purple;}
+.markup_education {border-bottom: 2px dashed #2F8A55;}
+.markup_entertainment {border-bottom: 2px dashed brown;}
+
+.markup_quote {border:1px dotted #2F8A55;}
+.markup_quote:after {content:url("images/quote.png")}
+.markup_quote.master {border-style:solid}
+.markup_quote.master:after {content:url("images/source.png")}
+
+
+.markup_bookquote {border:1px dotted #2F8A55;}
+.markup_bookquote:after {content:url("images/quote.png")}
+.markup_bookquote.master {border-style:solid}
+.markup_bookquote.master:after {content:url("images/bookname.png")}
+
+.markup_personquote {border:1px dotted #2F8A55;}
+.markup_personquote:after {content:url("images/quote.png")}
+.markup_personquote.master {border-style:solid}
+.markup_personquote.master:after {content:url("images/personname.png")}
+
+
+.markup_synonym {border-bottom:2px dotted pink}
+.markup_synonym:after {content:url("images/synonym.png")}
+.markup_synonym.master {border-bottom-style:solid;}
+.markup_synonym.master:after {content:"";}
+
+.markup_sign {border-bottom:2px dotted #2F8A55}
+.markup_sign:after {content:url("images/signified.png")}
+.markup_sign.master {border-bottom-style:solid;}
+.markup_sign.master:after {content:url("images/signifier.png")}
+
+.markup_causeeffect {border-bottom:2px dotted #2F8A55}
+.markup_causeeffect:after {content:url("images/effect.png")}
+.markup_causeeffect.master {border-bottom-style:solid;}
+.markup_causeeffect.master:after {content:url("images/cause.png")}
+
+.markup_nameappearance {border-bottom:2px dotted blue}
+.markup_nameappearance:after {content:url("images/appearance.png")}
+.markup_nameappearance.master {border-bottom-style:solid;}
+.markup_nameappearance.master:after {content:url("images/name.png")}
+
+.markup_commonindividual {border-bottom:2px dotted red}
+.markup_commonindividual:after {content:url("images/individual.png")}
+.markup_commonindividual.master {border-bottom-style:solid;}
+.markup_commonindividual.master:after {content:url("images/common.png")}
+
+.markup_wholepart {border-bottom:2px dotted orange}
+.markup_wholepart.master {border-bottom-style:solid;}
+
+.markup_sentiment {border-bottom: 2px dashed brown;}
+.markup_inference {border-bottom: 2px dashed purple;}
+.markup_edification {border-bottom: 2px dashed yellow;}
+.markup_important {border-bottom: 2px dashed red;}
+.markup_remind {border-bottom: 2px dashed pink;}
+.markup_question {border-bottom: 2px dashed blue;}
+.markup_answer {border-bottom: 2px dashed #40FFFF;}
+.markup_feel {border-bottom: 2px dashed green;}
+
+.markup_explain2 {border: 2px dashed #40FFFF;}
+.markup_feel2 {border: 2px dashed pink;}
+.markup_compare2 {border: 2px dashed blue;}
+.markup_criticize2 {border: 2px dashed darkgreen;}
+.markup_interpretation2 {border: 2px dashed purple;}
+.markup_important2 {border: 2px dashed red;}
+.markup_abstract2 {border: 2px dashed orange;}
+.markup_realize2 {border: 2px dashed yellow;}
+.markup_question2 {border: 2px dashed silver;}
+.markup_sentiment2 {border: 2px dashed brown;}
+.markup_paradigm {border: 2px dashed #2F8A55;}
