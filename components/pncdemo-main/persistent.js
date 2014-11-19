@@ -1,10 +1,11 @@
 var dbname="pncdemo";
 
 //var db=new PouchDB(dbname);
-if (window.location.host.substring(0,9)=="127.0.0.1"){
+if (ksana.platform=="node-webkit" || window.location.host.substring(0,9)=="127.0.0.1"){
     var db=null;
-    if (typeof Pouchdb !="undefined") {
-      db=new Pouchdb(dbname);
+    if (typeof PouchDB !="undefined") {
+      console.log(db)
+      db=new PouchDB(dbname);
     }
 } else {
     var db=new PouchDB('http://114.34.238.149:5984/'+dbname);
@@ -18,7 +19,7 @@ var loadMarkups=function(keys,cb,context){
   }
   db.allDocs({keys:keys,include_docs:true},function(err,response){
     var bulk=[];
-    response.rows.map(function(d){
+    if (response  && response.rows) response.rows.map(function(d){
     	if (d.error) {
     		bulk.push({_id:d.key,markups:[]});
     	} else {

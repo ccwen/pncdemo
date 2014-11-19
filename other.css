@@ -1,8 +1,6 @@
 
 .markup_defination {border-bottom: 2px dotted red;}
-.markup_defination:after {content:url("images/defination.png")}
 .markup_defination.master {border-bottom-style: solid;}
-.markup_defination.master:after {content:""}
 
 .markup_person {border-bottom: 2px dotted #2F8A55;}
 .markup_matter {border-bottom: 2px dotted purple;}
@@ -35,9 +33,7 @@
 
 
 .markup_synonym {border-bottom:2px dotted pink}
-.markup_synonym:after {content:url("images/synonym.png")}
 .markup_synonym.master {border-bottom-style:solid;}
-.markup_synonym.master:after {content:"";}
 
 .markup_sign {border-bottom:2px dotted #2F8A55}
 .markup_sign:after {content:url("images/signified.png")}

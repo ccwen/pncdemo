@@ -42,7 +42,7 @@ var hovermenu = React.createClass({
   componentDidUpdate:function() {
     var dom=this.getDOMNode();
     var target=this.props.target;
-    if (target) {
+    if (target && target.parentElement) {
       var pRect=target.parentElement.getBoundingClientRect();
       var rect=target.getBoundingClientRect();
       //console.log(pRect.left,rect.left, rect.left-pRect.left);

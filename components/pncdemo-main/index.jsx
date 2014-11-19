@@ -152,6 +152,7 @@ var main = React.createClass({
       selections.clear(opts);
       this.allmarkupchanged=true;
     } else if (action=="applyMarkup") {
+
       selections.applyMarkup(opts);
       this.action("clearSelection");
     } else if (action=="applyLink") {

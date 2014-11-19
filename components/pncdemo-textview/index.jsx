@@ -105,8 +105,9 @@ var textview = React.createClass({
         }
       }
       markups.push([r[0],r[1],tag,py]);
-    })
+    });
     this.clearRanges();
+    this.setState({extra:{markups:markups},markupchanged:true});
   },
   rangeToClasses:function(arr,i,prefix) {
     var out=[];
@@ -183,7 +184,6 @@ var textview = React.createClass({
     if (!markups.length) return out;
     markups.map(function(m){
       var start=m[0],len=m[1],tag=m[2],payload=m[3];
-      console.log(tag);
       if (!payload || !payload.insert) return;
       if ( (payload.insert=="end" && n==start+len-1)
       || (payload.insert=="start" && n==start) ){
@@ -381,6 +381,7 @@ var textview = React.createClass({
     }
   },
   render: function() {
+    console.log("render",this.state.extra.markups)
     return (
       <div>
         {this.renderExtraControls()}
